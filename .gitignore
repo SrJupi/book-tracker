@@ -23,7 +23,7 @@ coverage/
 
 #Os/editor junk
 .vscode/
-.idea
+.idea/
 *.iml
 *.swp
 *.swo
