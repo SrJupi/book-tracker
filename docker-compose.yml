@@ -1,0 +1,25 @@
+services:
+  db:
+    image: postgres:17.6-bookworm
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=${PG_PASS}
+      - POSTGRES_USER=${PG_USER}
+      - POSTGRES_DB=${PG_DB}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./infra/db_data
+
+networks:
+  book-network:
+    name: book-network
+    
