@@ -19,6 +19,7 @@ coverage/
 *.pid
 *.log
 *.tmp
+infra/db_data/
 
 
 #Os/editor junk
