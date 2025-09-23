@@ -1,36 +1,19 @@
 # ---- Build stage ----
-FROM eclipse-temurin:21-jdk AS build
+FROM node:24.8-bookworm AS build
 
 # Set work directory
 WORKDIR /app
 
-# Copy Maven wrapper and pom.xml first
-COPY mvnw .
-COPY .mvn .mvn
-COPY pom.xml .
+# Copy package.json and package-lock.json first
+COPY package.json .
+COPY package-lock.json .
 
 # Download dependencies (cached if pom.xml unchanged)
-RUN ./mvnw dependency:go-offline -B
+RUN npm ci
 
-# Copy source code
-COPY src src
+# Copy everything else, except files in .dockerignore
+# Copy eslint.config.js, index.html, package.json, package-lock.json, public folder, src folder, tsconfig.app.json, tsconfig.json, tsconfig.node.json, vite.config.ts
+COPY . . 
 
 # Build the application
-RUN ./mvnw package -DskipTests -B
-
-# ---- Runtime stage ----
-FROM eclipse-temurin:21-jre-alpine AS runtime
-
-WORKDIR /app
-
-# Copy built jar
-COPY --from=build /app/target/*.jar app.jar
-
-# Expose port
-EXPOSE 8080
-
-# Optional: healthcheck hitting actuator
-# HEALTHCHECK --interval=30s --timeout=5s --start-period=30s \
-#   CMD wget --quiet --tries=1 --spider http://localhost:8080/actuator/health || exit 1
-
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+RUN npm run build
