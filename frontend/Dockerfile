@@ -17,3 +17,9 @@ COPY . .
 
 # Build the application
 RUN npm run build
+
+
+FROM alpine:3.22 AS exporter
+WORKDIR /dist
+
+COPY --from=build /app/dist .

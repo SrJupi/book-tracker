@@ -54,6 +54,14 @@ services:
     networks:
       - book-network
 
+  frontend:
+    build: ./frontend
+    volumes:
+      - frontend-dist:/dist
+    depends_on:
+      backend:
+        condition: service_healthy
+    command: ["true"]
 
 volumes:
   db-data:
