@@ -8,6 +8,9 @@ services:
       PG_USER: ${PG_USER}
       PG_PASS: ${PG_PASS}
       PG_DB: ${PG_DB}
+    depends_on:
+      db:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
       interval: 30s
@@ -24,6 +27,12 @@ services:
       - POSTGRES_DB=${PG_DB}
     volumes:
       - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PG_USER} -d ${PG_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 
 volumes:
   db-data:
