@@ -1,4 +1,40 @@
 services:
+  nginx:
+    image: nginx:1.29.1-alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./infra/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - frontend-dist:/usr/share/nginx/html:ro
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - book-network
+  backend:
+    build: ./backend
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      PG_USER: ${PG_USER}
+      PG_PASS: ${PG_PASS}
+      PG_DB: ${PG_DB}
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health | grep -q '\"status\":\"UP\"'"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    networks:
+      - book-network
   db:
     image: postgres:17.6-bookworm
     restart: always
@@ -10,6 +46,22 @@ services:
       - POSTGRES_DB=${PG_DB}
     volumes:
       - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PG_USER} -d ${PG_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - book-network
+
+  frontend:
+    build: ./frontend
+    volumes:
+      - frontend-dist:/dist
+    depends_on:
+      backend:
+        condition: service_healthy
+    command: ["true"]
 
 volumes:
   db-data:
@@ -17,7 +69,9 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: ./infra/db_data
+      device: ./infra/postgres/db_data
+  frontend-dist:
+    driver: local
 
 networks:
   book-network:
