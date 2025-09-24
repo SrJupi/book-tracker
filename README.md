@@ -1,5 +1,8 @@
 # Book Tracker
 
+![CI](https://github.com/SrJupi/book-tracker/actions/workflows/ci.yml/badge.svg)
+
+
 ## 📂 Monorepo Structure
 
 - **backend/** — Spring Boot service (Java + Hibernate)
