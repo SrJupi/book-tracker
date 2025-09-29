@@ -18,11 +18,20 @@ public abstract class BaseEntity {
     private Long id;
 
     @Column(nullable = false, updatable = false)
-    @CreationTimestamp
     private Timestamp createdAt;
 
-    @UpdateTimestamp
     private Timestamp updateAt;
+
+    //JPA Callbacks
+    @PrePersist
+    protected void onCreate() {
+        createdAt = Timestamp.from(java.time.Instant.now());
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updateAt = Timestamp.from(java.time.Instant.now());
+    }
 
 
 }
