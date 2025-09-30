@@ -1,4 +1,4 @@
-package com.srjupi.booktracker.backend.users;
+package com.srjupi.booktracker.backend.user;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -13,4 +13,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     Optional<UserEntity> findByUsername(String username);
     Optional<UserEntity> findByEmail(String email);
+
+    void deleteByUsername(String username);
+    void deleteByEmail(String email);
 }

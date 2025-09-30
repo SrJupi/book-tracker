@@ -1,4 +1,4 @@
-package com.srjupi.booktracker.backend.users;
+package com.srjupi.booktracker.backend.user;
 
 import com.srjupi.booktracker.backend.common.base.BaseEntity;
 import jakarta.persistence.Column;
