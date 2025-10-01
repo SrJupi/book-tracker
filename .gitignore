@@ -5,6 +5,8 @@ target/
 *.war
 *.ear
 logs/
+.openapi-generator/
+**/backend/api/
 
 #Node
 node_modules/
