@@ -9,6 +9,6 @@ import java.util.List;
 public interface UserMapper {
     UserEntity toEntity(UserDTO dto);
     UserDTO toDTO(UserEntity entity);
-    List<UserDTO> toDTOs(List<UserEntity> entities);
-    List<UserEntity> toEntities(List<UserDTO> dtos);
+    List<UserDTO> toDTO(List<UserEntity> entities);
+    List<UserEntity> toEntity(List<UserDTO> dtos);
 }

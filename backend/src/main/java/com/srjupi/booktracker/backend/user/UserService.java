@@ -32,7 +32,7 @@ public class UserService {
         return userRepository.save(existingUser);
     }
 
-    public List<UserEntity> getAllUsers() {
+    public List<UserEntity> getUsers() {
         return userRepository.findAll();
     }
 

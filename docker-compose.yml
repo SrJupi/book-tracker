@@ -12,8 +12,8 @@ services:
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost"]
       interval: 30s
-      timeout: 10s
-      retries: 5
+      timeout: 5s
+      retries: 3
     networks:
       - book-network
   backend:
@@ -30,9 +30,9 @@ services:
         condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health | grep -q '\"status\":\"UP\"'"]
-      interval: 5s
-      timeout: 10s
-      retries: 5
+      interval: 30s
+      timeout: 5s
+      retries: 3
     networks:
       - book-network
   db:
@@ -48,9 +48,9 @@ services:
       - db-data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${PG_USER} -d ${PG_DB}"]
-      interval: 10s
+      interval: 30s
       timeout: 5s
-      retries: 5
+      retries: 3
     networks:
       - book-network
 
