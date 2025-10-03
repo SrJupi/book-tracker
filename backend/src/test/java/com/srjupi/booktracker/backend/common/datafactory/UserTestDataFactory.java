@@ -1,5 +1,6 @@
 package com.srjupi.booktracker.backend.common.datafactory;
 
+import com.srjupi.booktracker.backend.api.dto.UserDTO;
 import com.srjupi.booktracker.backend.user.UserEntity;
 
 public class UserTestDataFactory {
@@ -22,6 +23,19 @@ public class UserTestDataFactory {
         UserEntity user = createValidUser();
         user.setId(1L);
         return user;
+    }
+
+    public static UserDTO createValidUserDTO() {
+        UserDTO userDTO = new UserDTO();
+        userDTO.setEmail(DEFAULT_EMAIL);
+        userDTO.setUsername(DEFAULT_USERNAME);
+        return userDTO;
+    }
+
+    public static UserDTO createValidUserDTOWithId() {
+        UserDTO userDTO = createValidUserDTO();
+        userDTO.setId(1L);
+        return userDTO;
     }
 
 
