@@ -14,6 +14,7 @@ RUN ./mvnw dependency:go-offline -B
 
 # Copy source code
 COPY src src
+COPY contracts contracts
 
 # Build the application
 RUN ./mvnw package -DskipTests -B
