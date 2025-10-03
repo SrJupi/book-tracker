@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static com.srjupi.booktracker.backend.common.datafactory.UserTestDataFactory.*;
 import static com.srjupi.booktracker.backend.common.datafactory.UserTestDataFactory.createValidUserDTO;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -64,18 +65,68 @@ class UserControllerTest {
     }
 
     @Test
-    void deleteUser() {
+    void deleteUser_ShouldReturn204_WhenUserIsDeleted() throws Exception {
+        Long userId = 1L;
+
+        mockMvc.perform(delete("/users/{id}", userId))
+                .andExpect(status().isNoContent());
+    }
+
+    @Disabled("TODO: Add error handling test when GlobalExceptionHandler is implemented")
+    @Test
+    void deleteUser_ShouldReturn404_WhenUserDoesNotExist() {
     }
 
     @Test
-    void getUserById() {
+    void getUserById_ShouldReturn200_WhenUserExists() throws Exception {
+        Long userId = 1L;
+        UserEntity user = createValidUserWithId();
+        UserDTO userDTO = createValidUserDTOWithId();
+
+        when(userService.getUserById(userId)).thenReturn(user);
+        when(userMapper.toDTO(user)).thenReturn(userDTO);
+
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/users/{id}", userId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.username").value(DEFAULT_USERNAME))
+                .andExpect(jsonPath("$.email").value(DEFAULT_EMAIL));
+    }
+
+    @Disabled("TODO: Add error handling test when GlobalExceptionHandler is implemented")
+    @Test
+    void getUserById_ShouldReturn404_WhenUserDoesNotExist() {
     }
 
     @Test
-    void getUsers() {
+    void getUsers_ShouldReturn200_Always() throws Exception{
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/users"))
+                .andExpect(status().isOk());
     }
 
     @Test
-    void updateUserById() {
+    void updateUserById_shouldReturn200_WhenUserIsUpdated() throws Exception {
+        Long userId = 1L;
+        UserDTO requestDTO = createValidUserDTO();
+        UserEntity user = createValidUser();
+        UserEntity updatedUser = createValidUserWithId();
+        UserDTO responseDTO = createValidUserDTOWithId();
+
+        when(userMapper.toEntity(requestDTO)).thenReturn(user);
+        when(userService.updateUser(userId, user)).thenReturn(updatedUser);
+        when(userMapper.toDTO(updatedUser)).thenReturn(responseDTO);
+
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put("/users/{id}", userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestDTO)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.username").value(DEFAULT_USERNAME))
+                .andExpect(jsonPath("$.email").value(DEFAULT_EMAIL));
+    }
+
+    @Disabled("TODO: Add error handling test when GlobalExceptionHandler is implemented")
+    @Test
+    void updateUserById_ShouldReturn404_WhenUserDoesNotExist() {
     }
 }
