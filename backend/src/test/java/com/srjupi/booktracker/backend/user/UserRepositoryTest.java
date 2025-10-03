@@ -1,36 +1,36 @@
 package com.srjupi.booktracker.backend.user;
 
-import org.h2.engine.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import java.util.Optional;
 
+import static com.srjupi.booktracker.backend.common.datafactory.UserTestDataFactory.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
-public class UserRepositoryTests {
+class UserRepositoryTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private TestEntityManager entityManager;
 
     private UserEntity savedUser;
 
     @BeforeEach
     void setup() {
-        UserEntity user = new UserEntity();
-        user.setUsername("testuser");
-        user.setEmail("email@email.com");
-        savedUser = userRepository.save(user);
+        savedUser = userRepository.save(createValidUser());
     }
 
     @Test
     void existsByUsername_ShouldReturnTrue_WhenUserExists() {
-        boolean exists = userRepository.existsByUsername("testuser");
+        boolean exists = userRepository.existsByUsername(DEFAULT_USERNAME);
         assertTrue(exists);
     }
 
@@ -41,8 +41,8 @@ public class UserRepositoryTests {
     }
 
     @Test
-    void existsByEmail_ShouldReturnTrue_WhenUserExists() {
-        boolean exists = userRepository.existsByEmail("email@email.com");
+    public void existsByEmail_ShouldReturnTrue_WhenUserExists() {
+        boolean exists = userRepository.existsByEmail(DEFAULT_EMAIL);
         assertTrue(exists);
     }
 
@@ -54,10 +54,10 @@ public class UserRepositoryTests {
 
     @Test
     void findByUsername_ShouldReturnUser_WhenUserExists() {
-        Optional<UserEntity> user = userRepository.findByUsername("testuser");
+        Optional<UserEntity> user = userRepository.findByUsername(DEFAULT_USERNAME);
         assertThat(user).isPresent();
-        assertThat(user.get().getUsername().equals("testuser"));
-        assertThat(user.get().getEmail().equals("email@email.com"));
+        assertThat(user.get().getUsername().equals(DEFAULT_USERNAME));
+        assertThat(user.get().getEmail().equals(DEFAULT_EMAIL));
     }
 
     @Test
@@ -68,10 +68,10 @@ public class UserRepositoryTests {
 
     @Test
     void findByEmail_ShouldReturnUser_WhenUserExists() {
-        Optional<UserEntity> user = userRepository.findByEmail("email@email.com");
+        Optional<UserEntity> user = userRepository.findByEmail(DEFAULT_EMAIL);
         assertThat(user).isPresent();
-        assertThat(user.get().getUsername().equals("testuser"));
-        assertThat(user.get().getEmail().equals("email@email.com"));
+        assertThat(user.get().getUsername().equals(DEFAULT_USERNAME));
+        assertThat(user.get().getEmail().equals(DEFAULT_EMAIL));
     }
 
     @Test
@@ -82,19 +82,31 @@ public class UserRepositoryTests {
 
     @Test
     void deleteByUsername_ShouldRemoveUser_WhenUserExists() {
-        Optional<UserEntity> user = userRepository.findByUsername("testuser");
+        Optional<UserEntity> user = userRepository.findByUsername(DEFAULT_USERNAME);
         assertThat(user).isPresent();
-        userRepository.deleteByUsername("testuser");
-        user = userRepository.findByUsername("testuser");
+        userRepository.deleteByUsername(DEFAULT_USERNAME);
+        user = userRepository.findByUsername(DEFAULT_USERNAME);
         assertThat(user).isNotPresent();
     }
 
     @Test
     void deleteByEmail_ShouldRemoveUser_WhenUserExists() {
-        Optional<UserEntity> user = userRepository.findByEmail("email@email.com");
+        Optional<UserEntity> user = userRepository.findByEmail(DEFAULT_EMAIL);
         assertThat(user).isPresent();
-        userRepository.deleteByEmail("email@email.com");
-        user = userRepository.findByEmail("email@email.com");
+        userRepository.deleteByEmail(DEFAULT_EMAIL);
+        user = userRepository.findByEmail(DEFAULT_EMAIL);
         assertThat(user).isNotPresent();
+    }
+
+    @Test
+    void saveTwice_ShouldUpdateUser_WhenUserExists() {
+        Optional<UserEntity> userOpt = userRepository.findByUsername(DEFAULT_USERNAME);
+        assertThat(userOpt).isPresent();
+        UserEntity user = userOpt.get();
+        user.setEmail("newemail@email.com");
+        UserEntity updateUser = userRepository.save(user);
+        entityManager.flush();
+        assertThat(updateUser.getUpdateAt()).isNotNull();
+        assertThat(updateUser.getUpdateAt()).isAfter(updateUser.getCreatedAt());
     }
 }
