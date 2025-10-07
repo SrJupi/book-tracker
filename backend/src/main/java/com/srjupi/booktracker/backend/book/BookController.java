@@ -19,7 +19,6 @@ public class BookController implements BooksApi {
         this.mapper = bookMapper;
     }
 
-
     @Override
     public ResponseEntity<BookDTO> createBook(BookDTO bookDTO) {
         BookDTO createdBook = mapper.toDTO(service.createBook(mapper.toEntity(bookDTO)));

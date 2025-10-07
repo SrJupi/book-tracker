@@ -90,7 +90,7 @@ paths:
       operationId: getBooks
       responses:
         "200":
-          description: Paginated list of books
+          description: List of books
           content:
             application/json:
               schema:
@@ -186,7 +186,6 @@ components:
       required:
         - title
         - authors
-        - pages
       properties:
         id:
           type: integer
@@ -199,29 +198,20 @@ components:
             type: string
         isbn:
           type: string
-          nullable: true
           description: "Optional ISBN-10 or ISBN-13. Normalized to ISBN-13 internally if provided."
         publisher:
           type: string
-          nullable: true
         language:
           type: string
-          nullable: true
           example: "por"
         edition:
           type: string
-          nullable: true
         pages:
           type: integer
           minimum: 1
-        publishedDate:
-          type: string
-          format: date
-          nullable: true
         coverImageUrl:
           type: string
           format: uri
-          nullable: true
 
 
 
