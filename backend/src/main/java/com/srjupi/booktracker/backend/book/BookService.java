@@ -15,6 +15,8 @@ public class BookService {
     }
 
     public BookEntity createBook(BookEntity entity) {
+        // Basic check to avoid duplicate books based on ISBN
+        // Need to add check for title and authors if ISBN is null
         if (entity.getIsbn() != null) {
             Optional<BookEntity> existingBook = repository.findByIsbn(entity.getIsbn());
             if (existingBook.isPresent()) {
