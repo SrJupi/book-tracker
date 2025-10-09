@@ -11,7 +11,6 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 public class BookEntity extends BaseEntity {
 
@@ -30,6 +29,7 @@ public class BookEntity extends BaseEntity {
 
     private String edition;
 
+    @Column(nullable = false)
     private Integer pages;
 
     private String coverImageUrl;
