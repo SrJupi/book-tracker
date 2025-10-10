@@ -12,8 +12,6 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    // Placeholder using UserEntity while there is no DTO
-    // Change to UserDTO when it is created
     // Exceptions should also be changed when a proper exception handling strategy is in place
     public UserEntity createUser(UserEntity user) {
         if (userRepository.existsByEmail(user.getEmail())) {
