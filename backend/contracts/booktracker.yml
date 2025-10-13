@@ -213,6 +213,22 @@ components:
           type: string
           format: uri
 
-
-
-
+    #Maybe move to an exception handling contract (?)
+    ProblemDetail:
+      type: object
+      properties:
+        type:
+          type: string
+          format: uri
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri
+      required:
+        - title
+        - status

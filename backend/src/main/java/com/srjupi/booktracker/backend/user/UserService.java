@@ -36,7 +36,7 @@ public class UserService {
 
     public UserEntity getUserById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> User404Exception.fromId(id));
     }
 
     public UserEntity getUserByUsername(String username) {
