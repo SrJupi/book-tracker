@@ -1,5 +1,9 @@
 package com.srjupi.booktracker.backend.user;
 
+import com.srjupi.booktracker.backend.book.exceptions.Book404Exception;
+import com.srjupi.booktracker.backend.common.exceptions.BookTracker404Exception;
+import com.srjupi.booktracker.backend.user.exceptions.User404Exception;
+import com.srjupi.booktracker.backend.user.exceptions.User409Exception;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -10,6 +14,7 @@ import java.util.Optional;
 
 import static com.srjupi.booktracker.backend.common.datafactory.UserTestDataFactory.createValidUser;
 import static com.srjupi.booktracker.backend.common.datafactory.UserTestDataFactory.createValidUserWithId;
+import static com.srjupi.booktracker.backend.user.UserConstants.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -39,18 +44,20 @@ class UserServiceTest {
 
     @Test
     void createUser_ShouldThrowException_WhenEmailAlreadyExists() {
+        UserEntity user = createValidUser();
         when(userRepository.existsByEmail(anyString())).thenReturn(true);
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> userService.createUser(createValidUser()));
-        assertEquals("User with given email already exists", exception.getMessage());
+        Exception exception = assertThrows(User409Exception.class, () -> userService.createUser(user));
+        assertEquals(String.format(DETAIL_EMAIL_ALREADY_EXISTS, user.getEmail()), exception.getMessage());
         verify(userRepository, never()).save(any());
     }
 
     @Test
     void createUser_ShouldThrowException_WhenUserNameAlreadyExists() {
+        UserEntity user = createValidUser();
         when(userRepository.existsByEmail(anyString())).thenReturn(false);
         when(userRepository.existsByUsername(anyString())).thenReturn(true);
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> userService.createUser(createValidUser()));
-        assertEquals("User with given username already exists", exception.getMessage());
+        Exception exception = assertThrows(User409Exception.class, () -> userService.createUser(user));
+        assertEquals(String.format(DETAIL_USERNAME_ALREADY_EXISTS, user.getUsername()), exception.getMessage());
         verify(userRepository, never()).save(any());
     }
 
@@ -71,9 +78,10 @@ class UserServiceTest {
 
     @Test
     void updateUser_ShouldThrowException_WhenUserDoesNotExist() {
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> userService.updateUser(1L, createValidUser()));
-        assertEquals("User not found", exception.getMessage());
+        Long id = 1L;
+        when(userRepository.findById(id)).thenReturn(Optional.empty());
+        Exception exception = assertThrows(User404Exception.class, () -> userService.updateUser(id, createValidUser()));
+        assertEquals(String.format(DETAIL_NOT_FOUND_BY_ID, id), exception.getMessage());
         verify(userRepository, never()).save(any());
     }
 
@@ -96,9 +104,10 @@ class UserServiceTest {
 
     @Test
     void getUserById_ShouldThrowException_WhenUserDoesNotExist() {
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> userService.getUserById(1L));
-        assertEquals("User not found", exception.getMessage());
+        Long id = 1L;
+        when(userRepository.findById(id)).thenReturn(Optional.empty());
+        Exception exception = assertThrows(User404Exception.class, () -> userService.getUserById(id));
+        assertEquals(String.format(DETAIL_NOT_FOUND_BY_ID, id), exception.getMessage());
     }
 
     @Test
@@ -114,9 +123,10 @@ class UserServiceTest {
 
     @Test
     void getUserByUsername_ShouldThrowException_WhenUserDoesNotExist() {
+        String wrongUsername = "nonexistentuser";
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> userService.getUserByUsername("nonexistentuser"));
-        assertEquals("User not found", exception.getMessage());
+        Exception exception = assertThrows(User409Exception.class, () -> userService.getUserByUsername(wrongUsername));
+        assertEquals(String.format(DETAIL_USERNAME_ALREADY_EXISTS, wrongUsername), exception.getMessage());
     }
 
     @Test
@@ -132,9 +142,10 @@ class UserServiceTest {
 
     @Test
     void getUserByEmail_ShouldThrowException_WhenUserDoesNotExist() {
+        String wrongEmail = "abc@xyz.com";
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> userService.getUserByEmail("abc@xyz.com"));
-        assertEquals("User not found", exception.getMessage());
+        Exception exception = assertThrows(User409Exception.class, () -> userService.getUserByEmail(wrongEmail));
+        assertEquals(String.format(DETAIL_EMAIL_ALREADY_EXISTS, wrongEmail), exception.getMessage());
     }
 
     @Test
