@@ -35,6 +35,8 @@ paths:
                 $ref: "#/components/schemas/UserDTO"
         "400":
           description: Invalid input
+        "409":
+          description: User already exists
 
   /users/{id}:
     parameters:
