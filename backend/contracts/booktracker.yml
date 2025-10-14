@@ -17,6 +17,9 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/UserDTO"
+        "500":
+          $ref: "./components/responses.yml#/components/responses/InternalServerError"
+
     post:
       summary: Create a new user
       operationId: createUser
@@ -34,9 +37,11 @@ paths:
               schema:
                 $ref: "#/components/schemas/UserDTO"
         "400":
-          description: Invalid input
+          $ref: "./components/responses.yml#/components/responses/BadRequest"
         "409":
-          description: User already exists
+          $ref: "./components/responses.yml#/components/responses/Conflict"
+        "500":
+          $ref: "./components/responses.yml#/components/responses/InternalServerError"
 
   /users/{id}:
     parameters:
@@ -57,7 +62,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/UserDTO"
         "404":
-          description: User not found
+          $ref: "./components/responses.yml#/components/responses/NotFound"
+        "500":
+          $ref: "./components/responses.yml#/components/responses/InternalServerError"
     put:
       summary: Update user by ID
       operationId: updateUserById
@@ -75,7 +82,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/UserDTO"
         "404":
-          description: User not found
+          $ref: "./components/responses.yml#/components/responses/NotFound"
+        "500":
+          $ref: "./components/responses.yml#/components/responses/InternalServerError"
 
     delete:
       summary: Delete user by id
@@ -84,7 +93,9 @@ paths:
         "204":
           description: User deleted successfully
         "404":
-          description: User not found
+          $ref: "./components/responses.yml#/components/responses/NotFound"
+        "500":
+          $ref: "./components/responses.yml#/components/responses/InternalServerError"
 
   /books:
     get:
@@ -99,6 +110,8 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/BookDTO"
+        "500":
+          $ref: "./components/responses.yml#/components/responses/InternalServerError"
     post:
       summary: Create a new book
       operationId: createBook
@@ -116,7 +129,11 @@ paths:
               schema:
                 $ref: "#/components/schemas/BookDTO"
         "400":
-          description: Invalid input
+          $ref: "./components/responses.yml#/components/responses/BadRequest"
+        "409":
+          $ref: "./components/responses.yml#/components/responses/Conflict"
+        "500":
+          $ref: "./components/responses.yml#/components/responses/InternalServerError"
 
   /books/{id}:
     parameters:
@@ -137,7 +154,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/BookDTO"
         "404":
-          description: Book not found
+          $ref: "./components/responses.yml#/components/responses/NotFound"
+        "500":
+          $ref: "./components/responses.yml#/components/responses/InternalServerError"
     put:
       summary: Update book by ID
       operationId: updateBookById
@@ -155,7 +174,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/BookDTO"
         "404":
-          description: Book not found
+          $ref: "./components/responses.yml#/components/responses/NotFound"
+        "500":
+          $ref: "./components/responses.yml#/components/responses/InternalServerError"
 
     delete:
       summary: Delete book by id
@@ -164,7 +185,9 @@ paths:
         "204":
           description: Book deleted successfully
         "404":
-          description: Book not found
+          $ref: "./components/responses.yml#/components/responses/NotFound"
+        "500":
+          $ref: "./components/responses.yml#/components/responses/InternalServerError"
 
 
 components:
@@ -214,23 +237,3 @@ components:
         coverImageUrl:
           type: string
           format: uri
-
-    #Maybe move to an exception handling contract (?)
-    ProblemDetail:
-      type: object
-      properties:
-        type:
-          type: string
-          format: uri
-        title:
-          type: string
-        status:
-          type: integer
-        detail:
-          type: string
-        instance:
-          type: string
-          format: uri
-      required:
-        - title
-        - status
