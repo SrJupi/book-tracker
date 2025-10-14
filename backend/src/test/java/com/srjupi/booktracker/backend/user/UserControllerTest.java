@@ -1,9 +1,10 @@
 package com.srjupi.booktracker.backend.user;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.srjupi.booktracker.backend.api.dto.UserDTO;
-import org.junit.jupiter.api.Disabled;
+import com.srjupi.booktracker.backend.user.exceptions.User404Exception;
+import com.srjupi.booktracker.backend.user.exceptions.User409Exception;
+import com.srjupi.booktracker.backend.user.exceptions.User500Exception;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -12,10 +13,13 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static com.srjupi.booktracker.backend.common.datafactory.UserTestDataFactory.*;
-import static com.srjupi.booktracker.backend.common.datafactory.UserTestDataFactory.createValidUserDTO;
+import static com.srjupi.booktracker.backend.user.UserConstants.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.http.HttpStatus.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(UserController.class)
@@ -54,14 +58,32 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.email").value(DEFAULT_EMAIL));
     }
 
-    @Disabled("TODO: Add error handling test when GlobalExceptionHandler is implemented")
     @Test
-    void createUser_ShouldReturn409_WhenUserAlreadyExists() {
+    void createUser_ShouldReturn409_WhenUserAlreadyExists() throws Exception {
+        UserDTO requestDTO = createValidUserDTO();
+        UserEntity user = createValidUser();
+        when(userMapper.toEntity(requestDTO)).thenReturn(user);
+        when(userService.createUser(user)).thenThrow(User409Exception.fromUsername(user.getUsername()));
+
+        mockMvc.perform(post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestDTO)))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.title"). value(USER_ALREADY_EXISTS))
+                .andExpect(jsonPath("$.status").value(CONFLICT.value()));
     }
 
-    @Disabled("TODO: Add error handling test when GlobalExceptionHandler is implemented")
     @Test
-    void createUser_ShouldReturn500_WhenThereIsAnServerError() {
+    void createUser_ShouldReturn500_WhenThereIsAnServerError() throws Exception {
+
+        when(userService.createUser(any())).thenThrow(new User500Exception());
+
+        mockMvc.perform(post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createValidUserDTO())))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.title").value(USER_INTERNAL_SERVER_ERROR))
+                .andExpect(jsonPath("$.status").value(INTERNAL_SERVER_ERROR.value()));
     }
 
     @Test
@@ -72,9 +94,15 @@ class UserControllerTest {
                 .andExpect(status().isNoContent());
     }
 
-    @Disabled("TODO: Add error handling test when GlobalExceptionHandler is implemented")
     @Test
-    void deleteUser_ShouldReturn404_WhenUserDoesNotExist() {
+    void deleteUser_ShouldReturn404_WhenUserDoesNotExist() throws Exception {
+        doThrow(User404Exception.fromId(1L)).when(userService).deleteUserById(1L);
+
+        mockMvc.perform(delete("/users/{id}", 1L))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.title").value(USER_NOT_FOUND))
+                .andExpect(jsonPath("$.status").value(NOT_FOUND.value()));
+
     }
 
     @Test
@@ -93,9 +121,15 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.email").value(DEFAULT_EMAIL));
     }
 
-    @Disabled("TODO: Add error handling test when GlobalExceptionHandler is implemented")
     @Test
-    void getUserById_ShouldReturn404_WhenUserDoesNotExist() {
+    void getUserById_ShouldReturn404_WhenUserDoesNotExist() throws Exception {
+        Long id = 1L;
+        when(userService.getUserById(anyLong())).thenThrow(User404Exception.fromId(id));
+
+        mockMvc.perform(get("/users/{id}", id))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.title").value(USER_NOT_FOUND))
+                .andExpect(jsonPath("$.status").value(NOT_FOUND.value()));
     }
 
     @Test
@@ -125,8 +159,19 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.email").value(DEFAULT_EMAIL));
     }
 
-    @Disabled("TODO: Add error handling test when GlobalExceptionHandler is implemented")
     @Test
-    void updateUserById_ShouldReturn404_WhenUserDoesNotExist() {
+    void updateUserById_ShouldReturn404_WhenUserDoesNotExist() throws Exception {
+        Long id = 1L;
+        UserDTO requestDTO = createValidUserDTO();
+        UserEntity user = createValidUser();
+        when(userMapper.toEntity(requestDTO)).thenReturn(user);
+        when(userService.updateUser(anyLong(), any())).thenThrow(User404Exception.fromId(id));
+
+        mockMvc.perform(put("/users/{id}", id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(requestDTO)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.title").value(USER_NOT_FOUND))
+                .andExpect(jsonPath("$.status").value(NOT_FOUND.value()));
     }
 }
