@@ -1,5 +1,6 @@
 package com.srjupi.booktracker.backend.book;
 
+import com.srjupi.booktracker.backend.book.exceptions.Book404Exception;
 import com.srjupi.booktracker.backend.user.UserEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
+import static com.srjupi.booktracker.backend.book.BookConstants.DETAIL_NOT_FOUND_BY_ID;
 import static com.srjupi.booktracker.backend.common.datafactory.BookTestDataFactory.*;
 import static com.srjupi.booktracker.backend.common.datafactory.UserTestDataFactory.createValidUser;
 import static com.srjupi.booktracker.backend.common.datafactory.UserTestDataFactory.createValidUserWithId;
@@ -84,9 +86,10 @@ class BookServiceTest {
 
     @Test
     void getBookById_ShouldThrowException_WhenBookDoesNotExist() {
-        when(repository.findById(1L)).thenReturn(Optional.empty());
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> service.getBookById(1L));
-        assertEquals("Book not found", exception.getMessage());
+        Long id = 1L;
+        when(repository.findById(id)).thenReturn(Optional.empty());
+        Exception exception = assertThrows(Book404Exception.class, () -> service.getBookById(id));
+        assertEquals(String.format(DETAIL_NOT_FOUND_BY_ID, id), exception.getMessage());
     }
 
     @Test

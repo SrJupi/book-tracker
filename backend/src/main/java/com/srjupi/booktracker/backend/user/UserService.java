@@ -1,5 +1,7 @@
 package com.srjupi.booktracker.backend.user;
 
+import com.srjupi.booktracker.backend.user.exceptions.User404Exception;
+import com.srjupi.booktracker.backend.user.exceptions.User409Exception;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,13 +14,12 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    // Exceptions should also be changed when a proper exception handling strategy is in place
     public UserEntity createUser(UserEntity user) {
         if (userRepository.existsByEmail(user.getEmail())) {
-            throw new IllegalArgumentException("User with given email already exists");
+            throw User409Exception.fromEmail(user.getEmail());
         }
         if (userRepository.existsByUsername(user.getUsername())) {
-            throw new IllegalArgumentException("User with given username already exists");
+            throw User409Exception.fromUsername(user.getUsername());
         }
         return userRepository.save(user);
     }
@@ -36,17 +37,17 @@ public class UserService {
 
     public UserEntity getUserById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> User404Exception.fromId(id));
     }
 
     public UserEntity getUserByUsername(String username) {
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> User409Exception.fromUsername(username));
     }
 
     public UserEntity getUserByEmail(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> User409Exception.fromEmail(email));
     }
 
     public void deleteUserById(Long id) {

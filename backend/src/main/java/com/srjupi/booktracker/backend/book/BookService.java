@@ -1,5 +1,6 @@
 package com.srjupi.booktracker.backend.book;
 
+import com.srjupi.booktracker.backend.book.exceptions.Book404Exception;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,7 +34,7 @@ public class BookService {
 
     public BookEntity getBookById(Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Book not found"));
+                .orElseThrow(() -> Book404Exception.fromId(id));
     }
 
     public List<BookEntity> getBooks() {
