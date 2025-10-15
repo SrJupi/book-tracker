@@ -229,8 +229,6 @@ components:
         language:
           type: string
           example: "por"
-        edition:
-          type: string
         pages:
           type: integer
           minimum: 1

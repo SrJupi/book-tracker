@@ -27,8 +27,6 @@ public class BookEntity extends BaseEntity {
 
     private String language;
 
-    private String edition;
-
     @Column(nullable = false)
     private Integer pages;
 
