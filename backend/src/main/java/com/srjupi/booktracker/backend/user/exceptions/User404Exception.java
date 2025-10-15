@@ -2,8 +2,6 @@ package com.srjupi.booktracker.backend.user.exceptions;
 
 import com.srjupi.booktracker.backend.common.exceptions.BookTracker404Exception;
 
-import java.net.URI;
-
 import static com.srjupi.booktracker.backend.user.UserConstants.*;
 
 public class User404Exception extends BookTracker404Exception {

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.srjupi.booktracker.backend.api.dto.UserDTO;
 import com.srjupi.booktracker.backend.user.exceptions.User404Exception;
 import com.srjupi.booktracker.backend.user.exceptions.User409Exception;
-import com.srjupi.booktracker.backend.user.exceptions.User500Exception;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -76,13 +75,13 @@ class UserControllerTest {
     @Test
     void createUser_ShouldReturn500_WhenThereIsAnServerError() throws Exception {
 
-        when(userService.createUser(any())).thenThrow(new User500Exception());
+        when(userService.createUser(any())).thenThrow(new RuntimeException());
 
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createValidUserDTO())))
                 .andExpect(status().isInternalServerError())
-                .andExpect(jsonPath("$.title").value(USER_INTERNAL_SERVER_ERROR))
+                .andExpect(jsonPath("$.title").value(INTERNAL_SERVER_ERROR.getReasonPhrase()))
                 .andExpect(jsonPath("$.status").value(INTERNAL_SERVER_ERROR.value()));
     }
 

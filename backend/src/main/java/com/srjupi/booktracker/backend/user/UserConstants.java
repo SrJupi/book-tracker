@@ -12,9 +12,6 @@ public final class UserConstants {
     public static final String DETAIL_USERNAME_ALREADY_EXISTS = "User with username %s already exists";
     public static final String DETAIL_EMAIL_ALREADY_EXISTS = "User with email %s already exists";
 
-    public static final String USER_INTERNAL_SERVER_ERROR = "Internal Server Error";
-    public static final String DETAIL_INTERNAL_SERVER_ERROR = "An unexpected error occurred. Please try again later.";
-
     //Private constructor to prevent instantiation
     private UserConstants() {}
 }
