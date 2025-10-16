@@ -125,8 +125,8 @@ class UserServiceTest {
     void getUserByUsername_ShouldThrowException_WhenUserDoesNotExist() {
         String wrongUsername = "nonexistentuser";
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
-        Exception exception = assertThrows(User409Exception.class, () -> userService.getUserByUsername(wrongUsername));
-        assertEquals(String.format(DETAIL_USERNAME_ALREADY_EXISTS, wrongUsername), exception.getMessage());
+        Exception exception = assertThrows(User404Exception.class, () -> userService.getUserByUsername(wrongUsername));
+        assertEquals(String.format(DETAIL_NOT_FOUND_BY_USERNAME, wrongUsername), exception.getMessage());
     }
 
     @Test
@@ -144,8 +144,8 @@ class UserServiceTest {
     void getUserByEmail_ShouldThrowException_WhenUserDoesNotExist() {
         String wrongEmail = "abc@xyz.com";
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
-        Exception exception = assertThrows(User409Exception.class, () -> userService.getUserByEmail(wrongEmail));
-        assertEquals(String.format(DETAIL_EMAIL_ALREADY_EXISTS, wrongEmail), exception.getMessage());
+        Exception exception = assertThrows(User404Exception.class, () -> userService.getUserByEmail(wrongEmail));
+        assertEquals(String.format(DETAIL_NOT_FOUND_BY_EMAIL, wrongEmail), exception.getMessage());
     }
 
     @Test
