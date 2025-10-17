@@ -2,6 +2,8 @@ package com.srjupi.booktracker.backend.common.exceptions;
 
 import com.srjupi.booktracker.backend.api.dto.ProblemDetail;
 import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -19,8 +21,9 @@ public class GlobalExceptionHandler {
         put(BookTracker400Exception.class, BAD_REQUEST);
         put(BookTracker404Exception.class, NOT_FOUND);
         put(BookTracker409Exception.class, CONFLICT);
-        put(BookTracker500Exception.class, INTERNAL_SERVER_ERROR);
     }};
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @ExceptionHandler(BookTrackerBaseException.class)
     public ResponseEntity<ProblemDetail> handleBookTrackerException(BookTrackerBaseException ex, HttpServletRequest request) {
@@ -30,8 +33,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ProblemDetail> handleGenericException(Exception ex, HttpServletRequest request) {
-        //Log the exception when logger is available
-
+        logger.error("Unhandled exception ocurred: method={} uri={} message={}",
+                request.getMethod(), request.getRequestURI(), ex.getMessage(), ex);
         ProblemDetail problemDetail = new ProblemDetail()
                 .type(URI.create("/errors/internal"))
                 .title("Internal Server Error")

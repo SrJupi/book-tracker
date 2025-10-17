@@ -16,5 +16,15 @@ public class User404Exception extends BookTracker404Exception {
         );
     }
 
+    public static User404Exception fromUsername(String username) {
+        return new User404Exception(
+                String.format(DETAIL_NOT_FOUND_BY_USERNAME, username)
+        );
+    }
 
+    public static User404Exception fromEmail(String email) {
+        return new User404Exception(
+                String.format(DETAIL_NOT_FOUND_BY_EMAIL, email)
+        );
+    }
 }

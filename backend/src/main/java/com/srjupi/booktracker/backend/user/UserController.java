@@ -2,6 +2,8 @@ package com.srjupi.booktracker.backend.user;
 
 import com.srjupi.booktracker.backend.api.UsersApi;
 import com.srjupi.booktracker.backend.api.dto.UserDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,6 +15,7 @@ public class UserController implements UsersApi {
 
     private final UserService service;
     private final UserMapper mapper;
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public UserController(UserService userService, UserMapper userMapper) {
         this.service = userService;
@@ -21,29 +24,42 @@ public class UserController implements UsersApi {
 
     @Override
     public ResponseEntity<UserDTO> createUser(UserDTO userDTO) {
+        logger.info("POST /users called with body: {}", userDTO);
         UserDTO createdUser = mapper.toDTO(service.createUser(mapper.toEntity(userDTO)));
         URI location = URI.create(String.format("/users/%s", createdUser.getId()));
+        logger.info("POST /users created user with id: {} at location: {}", createdUser.getId(), location);
         return ResponseEntity.created(location).body(createdUser);
     }
 
     @Override
     public ResponseEntity<Void> deleteUser(Long id) {
+        logger.info("DELETE /users/{} called", id);
         service.deleteUserById(id);
+        logger.info("DELETE /users/{} completed", id);
         return ResponseEntity.noContent().build();
     }
 
     @Override
     public ResponseEntity<UserDTO> getUserById(Long id) {
-        return ResponseEntity.ok(mapper.toDTO(service.getUserById(id)));
+        logger.info("GET /users/{} called", id);
+        UserDTO userDTO = mapper.toDTO(service.getUserById(id));
+        logger.info("GET /users/{} returning: {}", id, userDTO);
+        return ResponseEntity.ok(userDTO);
     }
 
     @Override
     public ResponseEntity<List<UserDTO>> getUsers() {
-        return ResponseEntity.ok(mapper.toDTO(service.getUsers()));
+        logger.info("GET /users called");
+        List<UserDTO> users = mapper.toDTO(service.getUsers());
+        logger.info("GET /users returning {} users", users.size());
+        return ResponseEntity.ok(users);
     }
 
     @Override
     public ResponseEntity<UserDTO> updateUserById(Long id, UserDTO userDTO) {
-        return ResponseEntity.ok(mapper.toDTO(service.updateUser(id, mapper.toEntity(userDTO))));
+        logger.info("PUT /users/{} called with body: {}", id, userDTO);
+        UserDTO updatedUser = mapper.toDTO(service.updateUser(id, mapper.toEntity(userDTO)));
+        logger.info("PUT /users/{} updated user to: {}", id, updatedUser);
+        return ResponseEntity.ok(updatedUser);
     }
 }
