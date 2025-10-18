@@ -56,6 +56,11 @@ public class BookController implements BooksApi {
     }
 
     @Override
+    public ResponseEntity<List<BookDTO>> searchBooks(String title, String authors, String isbn, String publisher, String language, Integer page, Integer size) {
+        return null;
+    }
+
+    @Override
     public ResponseEntity<BookDTO> updateBookById(Long id, BookDTO bookDTO) {
         logger.info("PUT /books/{} called with body: {}", id, bookDTO);
         BookDTO updatedBook = mapper.toDTO(service.updateBook(id, mapper.toEntity(bookDTO)));

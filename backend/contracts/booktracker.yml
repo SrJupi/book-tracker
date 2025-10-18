@@ -135,6 +135,71 @@ paths:
         "500":
           $ref: "./components/responses.yml#/components/responses/InternalServerError"
 
+  /books/search:
+    get:
+      summary: Search books by their attributes
+      description: Search books by title, authors, ISBN, publisher, or language.
+      operationId: searchBooks
+      parameters:
+        - name: title
+          in: query
+          description: Title or part of the title to search for
+          schema:
+            type: string
+            example: "The Pragmatic Programmer"
+        - name: authors
+          in: query
+          description: Author name or part of the name to search for
+          schema:
+            type: string
+            example: "Andrew Hunt, David Thomas"
+        - name: isbn
+          in: query
+          description: ISBN-10 or ISBN-13 to search for
+          schema:
+            type: string
+            example: "978-013595705"
+        - name: publisher
+          in: query
+          description: Publisher name or part of the name to search for
+          schema:
+            type: string
+            example: "Pragmatic Programmer"
+        - name: language
+          in: query
+          description: Language code to search for (e.g., "eng", "por")
+          schema:
+            type: string
+            example: "por"
+        - name : page
+          in: query
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+        - name : size
+          in: query
+          schema:
+            type: integer
+            default: 10
+            minimum: 1
+            maximum: 100
+      responses:
+        "200":
+          description: List of books matching the search criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BookDTO"
+        "400":
+          $ref: "./components/responses.yml#/components/responses/BadRequest"
+        "404":
+          $ref: "./components/responses.yml#/components/responses/NotFound"
+        "500":
+          $ref: "./components/responses.yml#/components/responses/InternalServerError"
+
   /books/{id}:
     parameters:
       - name: id
