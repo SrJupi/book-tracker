@@ -65,7 +65,7 @@ public class BookService {
         return repository.save(existingBook);
     }
 
-    public List<BookEntity> searchBooks(String title, String authors, String isbn,
+    public Page<BookEntity> searchBooks(String title, String authors, String isbn,
                                      String publisher, String language, Integer page,
                                      Integer size) {
         logger.info("searchBooks called");
@@ -85,7 +85,8 @@ public class BookService {
         if (language != null && !language.isEmpty()) {
             specification = specification.and(BookSpecification.hasLanguage(language));
         }
-        Page<BookEntity> results = repository.findAll(specification, PageRequest.of(page, size));
-        return results.getContent();
+        Page<BookEntity> resultPage = repository.findAll(specification, PageRequest.of(page, size));
+        logger.info(resultPage.toString());
+        return resultPage;
     }
 }

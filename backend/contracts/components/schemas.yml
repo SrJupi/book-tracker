@@ -1,0 +1,82 @@
+Page:
+  description: Generic page structure for paginated responses
+  type: object
+  properties:
+    content:
+      type: array
+      items:
+        type: object
+      description: List of items on the current page
+    number:
+      type: integer
+      description: Current page number (0-indexed)
+    size:
+      type: integer
+      description: Number of items per page
+    totalElements:
+      type: integer
+      description: Total number of items across all pages
+    totalPages:
+      type: integer
+      description: Total number of pages available
+    first:
+      type: boolean
+      description: Indicates if this is the first page
+    last:
+      type: boolean
+      description: Indicates if this is the last page
+    empty:
+      type: boolean
+      description: Indicates if the page is empty
+BookPage:
+  allOf:
+    - $ref: "#/Page"
+  description: Paginated response for books
+  properties:
+    content:
+      type: array
+      items:
+        $ref: "#/BookDTO"
+UserDTO:
+  type: object
+  properties:
+    id:
+      type: integer
+      format: int64
+    username:
+      type: string
+    email:
+      type: string
+  required:
+    - username
+    - email
+
+BookDTO:
+  type: object
+  required:
+    - title
+    - authors
+  properties:
+    id:
+      type: integer
+      format: int64
+    title:
+      type: string
+    authors:
+      type: array
+      items:
+        type: string
+    isbn:
+      type: string
+      description: "Optional ISBN-10 or ISBN-13. Normalized to ISBN-13 internally if provided."
+    publisher:
+      type: string
+    language:
+      type: string
+      example: "por"
+    pages:
+      type: integer
+      minimum: 1
+    coverImageUrl:
+      type: string
+      format: uri
