@@ -28,4 +28,7 @@ public class BookSpecification {
         return (root, query, builder) ->
                 builder.equal(root.get("language"), language);
     }
+
+    // Private constructor to prevent instantiation
+    private BookSpecification() {}
 }

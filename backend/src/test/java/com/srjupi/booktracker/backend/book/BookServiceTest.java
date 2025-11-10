@@ -7,6 +7,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.util.Optional;
 
@@ -14,6 +18,7 @@ import static com.srjupi.booktracker.backend.book.BookConstants.DETAIL_NOT_FOUND
 import static com.srjupi.booktracker.backend.common.datafactory.BookTestDataFactory.*;
 import static com.srjupi.booktracker.backend.common.datafactory.UserTestDataFactory.createValidUser;
 import static com.srjupi.booktracker.backend.common.datafactory.UserTestDataFactory.createValidUserWithId;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -26,6 +31,12 @@ class BookServiceTest {
 
     @Mock
     private BookRepository repository;
+
+    @Mock
+    private Page<BookEntity> mockPage;
+
+    private static final int DEFAULT_PAGE = 0;
+    private static final int DEFAULT_SIZE = 10;
 
     @Test
     void createBook_ShouldCreateBook_WhenBookIsValid() {
@@ -112,4 +123,64 @@ class BookServiceTest {
         assertEquals(existingBook.getAuthors(), updatedBook.getAuthors());
         verify(repository, times(1)).save(existingBook);
     }
+
+    @Test
+    void searchBooks_ShouldUseUnrestrictedSpecification_WhenAllFiltersAreNull() {
+        when(repository.findAll(any(Specification.class), any(Pageable.class)))
+                .thenReturn(mockPage);
+
+        Page<BookEntity> result = service.searchBooks(
+                null, null, null, null, null,
+                DEFAULT_PAGE, DEFAULT_SIZE
+        );
+
+        assertThat(result).isEqualTo(mockPage);
+        verify(repository).findAll(any(Specification.class), eq(PageRequest.of(DEFAULT_PAGE, DEFAULT_SIZE)));
+    }
+
+    @Test
+    void searchBooks_ShouldAddTitleSpecification_WhenTitleIsProvided() {
+        String title = "Java";
+        when(repository.findAll(any(Specification.class), any(Pageable.class)))
+                .thenReturn(mockPage);
+
+        Page<BookEntity> result = service.searchBooks(
+                title, null, null, null, null,
+                DEFAULT_PAGE, DEFAULT_SIZE
+        );
+
+        assertThat(result).isEqualTo(mockPage);
+        verify(repository).findAll(any(Specification.class), eq(PageRequest.of(DEFAULT_PAGE, DEFAULT_SIZE)));
+    }
+
+    @Test
+    void searchBooks_ShouldCombineSpecifications_WhenMultipleFiltersProvided() {
+        when(repository.findAll(any(Specification.class), any(Pageable.class)))
+                .thenReturn(mockPage);
+
+        Page<BookEntity> result = service.searchBooks(
+                "Clean Code", "Robert Martin", "1234567890",
+                "Prentice Hall", "EN", DEFAULT_PAGE, DEFAULT_SIZE
+        );
+
+        assertThat(result).isEqualTo(mockPage);
+        verify(repository).findAll(any(Specification.class), eq(PageRequest.of(DEFAULT_PAGE, DEFAULT_SIZE)));
+    }
+
+    @Test
+    void searchBooks_ShouldIgnoreEmptyStrings() {
+        when(repository.findAll(any(Specification.class), any(Pageable.class)))
+                .thenReturn(mockPage);
+
+        service.searchBooks(
+                "", "", "", "", "",
+                DEFAULT_PAGE, DEFAULT_SIZE
+        );
+
+        verify(repository).findAll(any(Specification.class), any(Pageable.class));
+    }
+
+
+
+
 }
