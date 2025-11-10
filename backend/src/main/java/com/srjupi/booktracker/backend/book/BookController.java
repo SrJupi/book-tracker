@@ -2,6 +2,8 @@ package com.srjupi.booktracker.backend.book;
 
 import com.srjupi.booktracker.backend.api.BooksApi;
 import com.srjupi.booktracker.backend.api.dto.BookDTO;
+import com.srjupi.booktracker.backend.api.dto.BookPage;
+import com.srjupi.booktracker.backend.api.dto.Page;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -52,6 +54,16 @@ public class BookController implements BooksApi {
         logger.info("GET /books called");
         List<BookDTO> books = mapper.toDTO(service.getBooks());
         logger.info("GET /books returning {} books", books.size());
+        return ResponseEntity.ok(books);
+    }
+
+    @Override
+    public ResponseEntity<BookPage> searchBooks(String title, String authors, String isbn, String publisher, String language, Integer page, Integer size) {
+        logger.info("GET /books/search called with parameters\n\ttitle: {}\n\tauthors: {}\n\tisbn: {}\n\tpublisher: {}" +
+                "\n\tlanguage: {}\n\tpage: {}\n\tsize: {}",
+                title, authors, isbn, publisher, language, page, size);
+        BookPage books = mapper.toDTO(service.searchBooks(title, authors, isbn, publisher, language, page, size));
+        logger.info("GET /books/search returning {} books", books.getTotalElements());
         return ResponseEntity.ok(books);
     }
 
