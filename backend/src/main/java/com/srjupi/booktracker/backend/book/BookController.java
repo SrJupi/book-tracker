@@ -57,7 +57,12 @@ public class BookController implements BooksApi {
 
     @Override
     public ResponseEntity<List<BookDTO>> searchBooks(String title, String authors, String isbn, String publisher, String language, Integer page, Integer size) {
-        return null;
+        logger.info("GET /books/search called with parameters\n\ttitle: {}\n\tauthors: {}\n\tisbn: {}\n\tpublisher: {}" +
+                "\n\tlanguage: {}\n\tpage: {}\n\tsize: {}",
+                title, authors, isbn, publisher, language, page, size);
+        List<BookDTO> books = mapper.toDTO(service.searchBooks(title, authors, isbn, publisher, language, page, size));
+        logger.info("GET /books/search returning {} books", books.size());
+        return ResponseEntity.ok(books);
     }
 
     @Override
