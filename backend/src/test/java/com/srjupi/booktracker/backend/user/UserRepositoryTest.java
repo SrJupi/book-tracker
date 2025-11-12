@@ -10,7 +10,8 @@ import java.util.Optional;
 
 import static com.srjupi.booktracker.backend.common.datafactory.UserTestDataFactory.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
 class UserRepositoryTest {

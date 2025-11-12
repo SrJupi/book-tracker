@@ -3,7 +3,6 @@ package com.srjupi.booktracker.backend.book;
 import com.srjupi.booktracker.backend.api.BooksApi;
 import com.srjupi.booktracker.backend.api.dto.BookDTO;
 import com.srjupi.booktracker.backend.api.dto.BookPage;
-import com.srjupi.booktracker.backend.api.dto.Page;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;

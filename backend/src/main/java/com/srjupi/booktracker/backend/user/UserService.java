@@ -1,5 +1,6 @@
 package com.srjupi.booktracker.backend.user;
 
+import com.srjupi.booktracker.backend.api.dto.UserDTO;
 import com.srjupi.booktracker.backend.user.exceptions.User404Exception;
 import com.srjupi.booktracker.backend.user.exceptions.User409Exception;
 import org.slf4j.Logger;
@@ -11,40 +12,48 @@ import java.util.List;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final UserMapper mapper;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, UserMapper mapper) {
+        this.mapper = mapper;
         this.userRepository = userRepository;
     }
 
-    public UserEntity createUser(UserEntity user) {
+    public UserDTO createUser(UserDTO dto) {
         logger.info("createUser called");
-        if (userRepository.existsByEmail(user.getEmail())) {
-            logger.info("User with email: {} already exists. Throwing 409 Exception.", user.getEmail());
-            throw User409Exception.fromEmail(user.getEmail());
+        if (userRepository.existsByEmail(dto.getEmail())) {
+            logger.info("User with email: {} already exists. Throwing 409 Exception.", dto.getEmail());
+            throw User409Exception.fromEmail(dto.getEmail());
         }
-        if (userRepository.existsByUsername(user.getUsername())) {
-            logger.info("User with username: {} already exists. Throwing 409 Exception.", user.getUsername());
-            throw User409Exception.fromUsername(user.getUsername());
+        if (userRepository.existsByUsername(dto.getUsername())) {
+            logger.info("User with username: {} already exists. Throwing 409 Exception.", dto.getUsername());
+            throw User409Exception.fromUsername(dto.getUsername());
         }
-        return userRepository.save(user);
+        UserEntity user = mapper.toEntity(dto);
+        return mapper.toDTO(userRepository.save(user));
     }
 
-    public UserEntity updateUser(Long id, UserEntity updatedData) {
+    public UserDTO updateUser(Long id, UserDTO updatedData) {
         logger.info("updateUser called with id: {}", id);
         UserEntity existingUser = getUserById(id);
         existingUser.setUsername(updatedData.getUsername());
         existingUser.setEmail(updatedData.getEmail());
-        return userRepository.save(existingUser);
+        return mapper.toDTO(userRepository.save(existingUser));
     }
 
-    public List<UserEntity> getUsers() {
+    public List<UserDTO> getUsers() {
         logger.info("getUsers called");
-        return userRepository.findAll();
+        return mapper.toDTO(userRepository.findAll());
     }
 
-    public UserEntity getUserById(Long id) {
-        logger.info("getUserById called with id: {}", id);
+    public UserDTO getDtoById(Long id) {
+        logger.info("getDtoById called with id: {}", id);
+        UserEntity user = getUserById(id);
+        return mapper.toDTO(user);
+    }
+
+    private UserEntity getUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> {
                     logger.info("User with id: {} not found. Throwing 404 Exception.", id);

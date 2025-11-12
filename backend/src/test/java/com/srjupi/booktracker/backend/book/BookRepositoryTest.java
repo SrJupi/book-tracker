@@ -8,7 +8,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import java.util.Optional;
 
-import static com.srjupi.booktracker.backend.common.datafactory.BookTestDataFactory.*;
+import static com.srjupi.booktracker.backend.common.datafactory.BookTestDataFactory.DEFAULT_ISBN;
+import static com.srjupi.booktracker.backend.common.datafactory.BookTestDataFactory.createValidBookWithISBN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

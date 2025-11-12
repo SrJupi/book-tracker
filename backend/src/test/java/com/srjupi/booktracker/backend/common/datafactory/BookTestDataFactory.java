@@ -2,7 +2,6 @@ package com.srjupi.booktracker.backend.common.datafactory;
 
 import com.srjupi.booktracker.backend.book.BookEntity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class BookTestDataFactory {

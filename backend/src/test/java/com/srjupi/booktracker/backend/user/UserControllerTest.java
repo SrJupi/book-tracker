@@ -12,7 +12,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static com.srjupi.booktracker.backend.common.datafactory.UserTestDataFactory.*;
-import static com.srjupi.booktracker.backend.user.UserConstants.*;
+import static com.srjupi.booktracker.backend.user.UserConstants.USER_ALREADY_EXISTS;
+import static com.srjupi.booktracker.backend.user.UserConstants.USER_NOT_FOUND;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doThrow;
@@ -33,19 +34,12 @@ class UserControllerTest {
     @MockitoBean
     private UserService userService;
 
-    @MockitoBean
-    private UserMapper userMapper;
-
     @Test
     void createUser_ShouldReturn201_WhenUserIsValid() throws Exception {
         UserDTO requestDTO = createValidUserDTO();
-        UserEntity user = createValidUser();
-        UserEntity createdUser = createValidUserWithId();
         UserDTO responseDTO = createValidUserDTOWithId();
 
-        when(userMapper.toEntity(requestDTO)).thenReturn(user);
-        when(userService.createUser(user)).thenReturn(createdUser);
-        when(userMapper.toDTO(createdUser)).thenReturn(responseDTO);
+        when(userService.createUser(requestDTO)).thenReturn(responseDTO);
 
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -60,9 +54,7 @@ class UserControllerTest {
     @Test
     void createUser_ShouldReturn409_WhenUserAlreadyExists() throws Exception {
         UserDTO requestDTO = createValidUserDTO();
-        UserEntity user = createValidUser();
-        when(userMapper.toEntity(requestDTO)).thenReturn(user);
-        when(userService.createUser(user)).thenThrow(User409Exception.fromUsername(user.getUsername()));
+        when(userService.createUser(requestDTO)).thenThrow(User409Exception.fromUsername(requestDTO.getUsername()));
 
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -107,11 +99,9 @@ class UserControllerTest {
     @Test
     void getUserById_ShouldReturn200_WhenUserExists() throws Exception {
         Long userId = 1L;
-        UserEntity user = createValidUserWithId();
         UserDTO userDTO = createValidUserDTOWithId();
 
-        when(userService.getUserById(userId)).thenReturn(user);
-        when(userMapper.toDTO(user)).thenReturn(userDTO);
+        when(userService.getDtoById(userId)).thenReturn(userDTO);
 
         mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/users/{id}", userId))
                 .andExpect(status().isOk())
@@ -123,7 +113,7 @@ class UserControllerTest {
     @Test
     void getUserById_ShouldReturn404_WhenUserDoesNotExist() throws Exception {
         Long id = 1L;
-        when(userService.getUserById(anyLong())).thenThrow(User404Exception.fromId(id));
+        when(userService.getDtoById(anyLong())).thenThrow(User404Exception.fromId(id));
 
         mockMvc.perform(get("/users/{id}", id))
                 .andExpect(status().isNotFound())
@@ -141,13 +131,9 @@ class UserControllerTest {
     void updateUserById_shouldReturn200_WhenUserIsUpdated() throws Exception {
         Long userId = 1L;
         UserDTO requestDTO = createValidUserDTO();
-        UserEntity user = createValidUser();
-        UserEntity updatedUser = createValidUserWithId();
         UserDTO responseDTO = createValidUserDTOWithId();
 
-        when(userMapper.toEntity(requestDTO)).thenReturn(user);
-        when(userService.updateUser(userId, user)).thenReturn(updatedUser);
-        when(userMapper.toDTO(updatedUser)).thenReturn(responseDTO);
+        when(userService.updateUser(userId, requestDTO)).thenReturn(responseDTO);
 
         mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put("/users/{id}", userId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -162,8 +148,6 @@ class UserControllerTest {
     void updateUserById_ShouldReturn404_WhenUserDoesNotExist() throws Exception {
         Long id = 1L;
         UserDTO requestDTO = createValidUserDTO();
-        UserEntity user = createValidUser();
-        when(userMapper.toEntity(requestDTO)).thenReturn(user);
         when(userService.updateUser(anyLong(), any())).thenThrow(User404Exception.fromId(id));
 
         mockMvc.perform(put("/users/{id}", id)

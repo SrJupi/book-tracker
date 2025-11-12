@@ -1,7 +1,6 @@
 package com.srjupi.booktracker.backend.user;
 
-import com.srjupi.booktracker.backend.book.exceptions.Book404Exception;
-import com.srjupi.booktracker.backend.common.exceptions.BookTracker404Exception;
+import com.srjupi.booktracker.backend.api.dto.UserDTO;
 import com.srjupi.booktracker.backend.user.exceptions.User404Exception;
 import com.srjupi.booktracker.backend.user.exceptions.User409Exception;
 import org.junit.jupiter.api.Test;
@@ -12,8 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static com.srjupi.booktracker.backend.common.datafactory.UserTestDataFactory.createValidUser;
-import static com.srjupi.booktracker.backend.common.datafactory.UserTestDataFactory.createValidUserWithId;
+import static com.srjupi.booktracker.backend.common.datafactory.UserTestDataFactory.*;
 import static com.srjupi.booktracker.backend.user.UserConstants.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -28,13 +26,20 @@ class UserServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private UserMapper userMapper;
+
     @Test
     void createUser_ShouldCreateUser_WhenUserIsValid() {
         UserEntity user = createValidUser();
+        UserDTO requestDTO = createValidUserDTO();
+        UserDTO responseDTO = createValidUserDTOWithId();
         when(userRepository.existsByEmail(anyString())).thenReturn(false);
         when(userRepository.existsByUsername(anyString())).thenReturn(false);
-        when(userRepository.save(user)).thenReturn(createValidUserWithId());
-        UserEntity createdUser = userService.createUser(user);
+        when(userRepository.save(any(UserEntity.class))).thenReturn(createValidUserWithId());
+        when(userMapper.toEntity(any(UserDTO.class))).thenReturn(user);
+        when(userMapper.toDTO(any(UserEntity.class))).thenReturn(responseDTO);
+        UserDTO createdUser = userService.createUser(requestDTO);
         assertNotNull(createdUser);
         assertEquals(1L, createdUser.getId());
         assertEquals(user.getUsername(), createdUser.getUsername());
@@ -44,31 +49,33 @@ class UserServiceTest {
 
     @Test
     void createUser_ShouldThrowException_WhenEmailAlreadyExists() {
-        UserEntity user = createValidUser();
+        UserDTO requestDTO = createValidUserDTO();
         when(userRepository.existsByEmail(anyString())).thenReturn(true);
-        Exception exception = assertThrows(User409Exception.class, () -> userService.createUser(user));
-        assertEquals(String.format(DETAIL_EMAIL_ALREADY_EXISTS, user.getEmail()), exception.getMessage());
+        Exception exception = assertThrows(User409Exception.class, () -> userService.createUser(requestDTO));
+        assertEquals(String.format(DETAIL_EMAIL_ALREADY_EXISTS, requestDTO.getEmail()), exception.getMessage());
         verify(userRepository, never()).save(any());
     }
 
     @Test
     void createUser_ShouldThrowException_WhenUserNameAlreadyExists() {
-        UserEntity user = createValidUser();
+        UserDTO requestDTO = createValidUserDTO();
         when(userRepository.existsByEmail(anyString())).thenReturn(false);
         when(userRepository.existsByUsername(anyString())).thenReturn(true);
-        Exception exception = assertThrows(User409Exception.class, () -> userService.createUser(user));
-        assertEquals(String.format(DETAIL_USERNAME_ALREADY_EXISTS, user.getUsername()), exception.getMessage());
+        Exception exception = assertThrows(User409Exception.class, () -> userService.createUser(requestDTO));
+        assertEquals(String.format(DETAIL_USERNAME_ALREADY_EXISTS, requestDTO.getUsername()), exception.getMessage());
         verify(userRepository, never()).save(any());
     }
 
     @Test
     void updateUser_ShouldUpdateUser_WhenUserExists() {
         UserEntity existingUser = createValidUserWithId();
-        UserEntity updatedData = createValidUser();
-        updatedData.setUsername("newusername");
+        UserDTO requestDTO = createValidUserDTO();
+        UserDTO responseDTO = createValidUserDTOWithId();
+        responseDTO.setUsername("newusername");
         when(userRepository.findById(1L)).thenReturn(Optional.of(existingUser));
         when(userRepository.save(existingUser)).thenReturn(existingUser);
-        UserEntity updatedUser = userService.updateUser(1L, updatedData);
+        when(userMapper.toDTO(existingUser)).thenReturn(responseDTO);
+        UserDTO updatedUser = userService.updateUser(1L, requestDTO);
         assertNotNull(updatedUser);
         assertEquals(existingUser.getId(), updatedUser.getId());
         assertEquals("newusername", updatedUser.getUsername());
@@ -80,7 +87,7 @@ class UserServiceTest {
     void updateUser_ShouldThrowException_WhenUserDoesNotExist() {
         Long id = 1L;
         when(userRepository.findById(id)).thenReturn(Optional.empty());
-        Exception exception = assertThrows(User404Exception.class, () -> userService.updateUser(id, createValidUser()));
+        Exception exception = assertThrows(User404Exception.class, () -> userService.updateUser(id, createValidUserDTO()));
         assertEquals(String.format(DETAIL_NOT_FOUND_BY_ID, id), exception.getMessage());
         verify(userRepository, never()).save(any());
     }
@@ -94,8 +101,10 @@ class UserServiceTest {
     @Test
     void getUserById_ShouldReturnUser_WhenUserExists() {
         UserEntity existingUser = createValidUserWithId();
+        UserDTO responseDTO = createValidUserDTOWithId();
         when(userRepository.findById(1L)).thenReturn(Optional.of(existingUser));
-        UserEntity user = userService.getUserById(1L);
+        when(userMapper.toDTO(existingUser)).thenReturn(responseDTO);
+        UserDTO user = userService.getDtoById(1L);
         assertNotNull(user);
         assertEquals(existingUser.getId(), user.getId());
         assertEquals(existingUser.getUsername(), user.getUsername());
@@ -106,7 +115,7 @@ class UserServiceTest {
     void getUserById_ShouldThrowException_WhenUserDoesNotExist() {
         Long id = 1L;
         when(userRepository.findById(id)).thenReturn(Optional.empty());
-        Exception exception = assertThrows(User404Exception.class, () -> userService.getUserById(id));
+        Exception exception = assertThrows(User404Exception.class, () -> userService.getDtoById(id));
         assertEquals(String.format(DETAIL_NOT_FOUND_BY_ID, id), exception.getMessage());
     }
 

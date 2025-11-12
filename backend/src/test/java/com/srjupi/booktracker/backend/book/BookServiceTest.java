@@ -1,7 +1,6 @@
 package com.srjupi.booktracker.backend.book;
 
 import com.srjupi.booktracker.backend.book.exceptions.Book404Exception;
-import com.srjupi.booktracker.backend.user.UserEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,11 +15,8 @@ import java.util.Optional;
 
 import static com.srjupi.booktracker.backend.book.BookConstants.DETAIL_NOT_FOUND_BY_ID;
 import static com.srjupi.booktracker.backend.common.datafactory.BookTestDataFactory.*;
-import static com.srjupi.booktracker.backend.common.datafactory.UserTestDataFactory.createValidUser;
-import static com.srjupi.booktracker.backend.common.datafactory.UserTestDataFactory.createValidUserWithId;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
