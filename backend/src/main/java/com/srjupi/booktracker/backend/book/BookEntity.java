@@ -23,7 +23,6 @@ public class BookEntity extends BaseEntity {
     @Column(nullable = false)
     private String authors;
 
-    @NotNull
     @Column(unique = true)
     private String isbn;
 

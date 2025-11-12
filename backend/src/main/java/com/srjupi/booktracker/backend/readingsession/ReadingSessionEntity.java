@@ -3,10 +3,7 @@ package com.srjupi.booktracker.backend.readingsession;
 import com.srjupi.booktracker.backend.book.BookEntity;
 import com.srjupi.booktracker.backend.common.base.BaseEntity;
 import com.srjupi.booktracker.backend.user.UserEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,11 +18,11 @@ import java.time.LocalDate;
 public class ReadingSessionEntity extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name="book_id", nullable = false)
+    @JoinColumn(name="book_id", nullable = false)
     private BookEntity book;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name="user_id", nullable = true)
+    @JoinColumn(name="user_id", nullable = true)
     private UserEntity user;
 
     @NotNull
