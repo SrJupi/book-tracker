@@ -15,18 +15,16 @@ import java.util.List;
 public class BookController implements BooksApi {
 
     private final BookService service;
-    private final BookMapper mapper;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public BookController (BookService bookService, BookMapper bookMapper) {
+    public BookController (BookService bookService) {
         this.service = bookService;
-        this.mapper = bookMapper;
     }
 
     @Override
     public ResponseEntity<BookDTO> createBook(BookDTO bookDTO) {
         logger.info("POST /books called with body: {}", bookDTO);
-        BookDTO createdBook = mapper.toDTO(service.createBook(mapper.toEntity(bookDTO)));
+        BookDTO createdBook = service.createBook(bookDTO);
         URI location = URI.create(String.format("/books/%s", createdBook.getId()));
         logger.info("POST /books created book with id: {} at location: {}", createdBook.getId(), location);
         return ResponseEntity.created(location).body(createdBook);
@@ -43,7 +41,7 @@ public class BookController implements BooksApi {
     @Override
     public ResponseEntity<BookDTO> getBookById(Long id) {
         logger.info("GET /books/{} called", id);
-        BookDTO bookDTO = mapper.toDTO(service.getBookById(id));
+        BookDTO bookDTO = service.getBookDtoById(id);
         logger.info("GET /books/{} returning: {}", id, bookDTO);
         return ResponseEntity.ok(bookDTO);
     }
@@ -51,7 +49,7 @@ public class BookController implements BooksApi {
     @Override
     public ResponseEntity<List<BookDTO>> getBooks() {
         logger.info("GET /books called");
-        List<BookDTO> books = mapper.toDTO(service.getBooks());
+        List<BookDTO> books = service.getBooks();
         logger.info("GET /books returning {} books", books.size());
         return ResponseEntity.ok(books);
     }
@@ -61,7 +59,7 @@ public class BookController implements BooksApi {
         logger.info("GET /books/search called with parameters\n\ttitle: {}\n\tauthors: {}\n\tisbn: {}\n\tpublisher: {}" +
                 "\n\tlanguage: {}\n\tpage: {}\n\tsize: {}",
                 title, authors, isbn, publisher, language, page, size);
-        BookPage books = mapper.toDTO(service.searchBooks(title, authors, isbn, publisher, language, page, size));
+        BookPage books = service.searchBooks(title, authors, isbn, publisher, language, page, size);
         logger.info("GET /books/search returning {} books", books.getTotalElements());
         return ResponseEntity.ok(books);
     }
@@ -69,7 +67,7 @@ public class BookController implements BooksApi {
     @Override
     public ResponseEntity<BookDTO> updateBookById(Long id, BookDTO bookDTO) {
         logger.info("PUT /books/{} called with body: {}", id, bookDTO);
-        BookDTO updatedBook = mapper.toDTO(service.updateBook(id, mapper.toEntity(bookDTO)));
+        BookDTO updatedBook = service.updateBook(id, bookDTO);
         logger.info("PUT /books/{} updated book to: {}", id, updatedBook);
         return ResponseEntity.ok(updatedBook);
     }
