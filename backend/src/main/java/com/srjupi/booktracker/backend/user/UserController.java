@@ -2,6 +2,7 @@ package com.srjupi.booktracker.backend.user;
 
 import com.srjupi.booktracker.backend.api.UsersApi;
 import com.srjupi.booktracker.backend.api.dto.UserDTO;
+import com.srjupi.booktracker.backend.api.dto.UserWithReadingsDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -43,6 +44,12 @@ public class UserController implements UsersApi {
         UserDTO userDTO = service.getDtoById(id);
         logger.info("GET /users/{} returning: {}", id, userDTO);
         return ResponseEntity.ok(userDTO);
+    }
+
+    @Override
+    public ResponseEntity<UserWithReadingsDTO> getUserWithReadings(Long id) {
+        logger.warn("GET /users/{}/readings is not yet implemented", id);
+        return null;
     }
 
     @Override

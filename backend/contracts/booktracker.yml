@@ -107,6 +107,31 @@ paths:
         "500":
           $ref: "./components/responses.yml#/components/responses/InternalServerError"
 
+  /users/{id}/readings:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+    get:
+      summary: Get user with their readings by user ID
+      operationId: getUserWithReadings
+      tags:
+        - Users
+      responses:
+        "200":
+          description: User with readings found
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas.yml#/UserWithReadingsDTO"
+        "404":
+          $ref: "./components/responses.yml#/components/responses/NotFound"
+        "500":
+          $ref: "./components/responses.yml#/components/responses/InternalServerError"
+
   /books:
     get:
       summary: Get all books

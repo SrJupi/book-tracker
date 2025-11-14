@@ -29,5 +29,5 @@ public class ReadingEntity extends BaseEntity {
     @Column(nullable = false)
     private LocalDate startedAt;
 
-    private LocalDate endedAt;
+    private LocalDate finishedAt;
 }
