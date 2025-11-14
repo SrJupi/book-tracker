@@ -8,6 +8,8 @@ paths:
     get:
       summary: Get all users
       operationId: getUsers
+      tags:
+        - Users
       responses:
         "200":
           description: List of users
@@ -23,6 +25,8 @@ paths:
     post:
       summary: Create a new user
       operationId: createUser
+      tags:
+        - Users
       requestBody:
         required: true
         content:
@@ -54,6 +58,8 @@ paths:
     get:
       summary: Get user by ID
       operationId: getUserById
+      tags:
+        - Users
       responses:
         "200":
           description: User found
@@ -68,6 +74,8 @@ paths:
     put:
       summary: Update user by ID
       operationId: updateUserById
+      tags:
+        - Users
       requestBody:
         required: true
         content:
@@ -89,6 +97,8 @@ paths:
     delete:
       summary: Delete user by id
       operationId: deleteUser
+      tags:
+        - Users
       responses:
         "204":
           description: User deleted successfully
@@ -101,6 +111,8 @@ paths:
     get:
       summary: Get all books
       operationId: getBooks
+      tags:
+        - Books
       responses:
         "200":
           description: List of books
@@ -115,6 +127,8 @@ paths:
     post:
       summary: Create a new book
       operationId: createBook
+      tags:
+        - Books
       requestBody:
         required: true
         content:
@@ -140,6 +154,8 @@ paths:
       summary: Search books by their attributes
       description: Search books by title, authors, ISBN, publisher, or language.
       operationId: searchBooks
+      tags:
+        - Books
       parameters:
         - name: title
           in: query
@@ -209,6 +225,8 @@ paths:
     get:
       summary: Get book by ID
       operationId: getBookById
+      tags:
+        - Books
       responses:
         "200":
           description: Book found
@@ -223,6 +241,8 @@ paths:
     put:
       summary: Update book by ID
       operationId: updateBookById
+      tags:
+        - Books
       requestBody:
         required: true
         content:
@@ -244,6 +264,8 @@ paths:
     delete:
       summary: Delete book by id
       operationId: deleteBook
+      tags:
+        - Books
       responses:
         "204":
           description: Book deleted successfully
