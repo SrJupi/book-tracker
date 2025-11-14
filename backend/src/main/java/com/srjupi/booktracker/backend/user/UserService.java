@@ -106,4 +106,13 @@ public class UserService {
         UserEntity user = getUserByEmail(email);
         userRepository.delete(user);
     }
+
+    public UserWithReadingsDTO getUserWithReadingsById(Long id) {
+        logger.info("getUserWithReadingsById called with id: {}", id);
+        UserEntity user = userRepository.findByIdWithReadings(id).orElseThrow(() -> {
+            logger.info("User with id: {} not found. Throwing 404 Exception.", id);
+            return User404Exception.fromId(id);
+        });
+        return mapper.toUserWithReadingsDTO(user);
+    }
 }

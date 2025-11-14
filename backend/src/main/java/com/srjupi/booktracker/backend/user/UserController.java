@@ -48,8 +48,10 @@ public class UserController implements UsersApi {
 
     @Override
     public ResponseEntity<UserWithReadingsDTO> getUserWithReadings(Long id) {
-        logger.warn("GET /users/{}/readings is not yet implemented", id);
-        return null;
+        logger.info("GET /users/{}/readings called", id);
+        UserWithReadingsDTO userWithReadingsDTO = service.getUserWithReadingsById(id);
+        logger.info("GET /users/{}/readings returning: {}", id, userWithReadingsDTO);
+        return ResponseEntity.ok(userWithReadingsDTO);
     }
 
     @Override

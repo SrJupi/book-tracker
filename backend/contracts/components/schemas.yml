@@ -112,6 +112,12 @@ ReadingDto:
     finishedAt:
       type: string
       format: date
-  required:
-    - book
-    - startedAt
+
+FinishReadingRequest:
+    type: object
+    properties:
+      finishedAt:
+        type: string
+        format: date
+    required:
+      - finishedAt

@@ -131,6 +131,131 @@ paths:
           $ref: "./components/responses.yml#/components/responses/NotFound"
         "500":
           $ref: "./components/responses.yml#/components/responses/InternalServerError"
+    post:
+      summary: Add a reading to a user
+      operationId: addReadingToUser
+      tags:
+        - Readings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./components/schemas.yml#/ReadingDto"
+      responses:
+        "201":
+          description: Reading added successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas.yml#/ReadingDto"
+        "400":
+          $ref: "./components/responses.yml#/components/responses/BadRequest"
+        "404":
+          $ref: "./components/responses.yml#/components/responses/NotFound"
+        "500":
+          $ref: "./components/responses.yml#/components/responses/InternalServerError"
+  /users/{userId}/readings/{readingId}:
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: readingId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+    delete:
+      summary: Delete a reading from a user
+      operationId: deleteReadingFromUser
+      tags:
+        - Readings
+      responses:
+        "204":
+          description: Reading deleted successfully
+        "404":
+          $ref: "./components/responses.yml#/components/responses/NotFound"
+        "500":
+          $ref: "./components/responses.yml#/components/responses/InternalServerError"
+    get:
+      summary: Get a specific reading of a user
+      operationId: getReadingOfUser
+      tags:
+        - Readings
+      responses:
+        "200":
+          description: Reading found
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas.yml#/ReadingDto"
+        "404":
+          $ref: "./components/responses.yml#/components/responses/NotFound"
+        "500":
+          $ref: "./components/responses.yml#/components/responses/InternalServerError"
+    patch:
+      summary: Update a specific reading of a user
+      operationId: updateReadingOfUser
+      tags:
+        - Readings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./components/schemas.yml#/ReadingDto"
+      responses:
+        "200":
+          description: Reading updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas.yml#/ReadingDto"
+        "404":
+          $ref: "./components/responses.yml#/components/responses/NotFound"
+        "500":
+          $ref: "./components/responses.yml#/components/responses/InternalServerError"
+
+  /users/{userId}/readings/{readingId}/complete:
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: readingId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+    post:
+      summary: Mark a reading as complete for a user
+      operationId: completeReadingForUser
+      tags:
+        - Readings
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "./components/schemas.yml#/FinishReadingRequest"
+      responses:
+        "200":
+          description: Reading marked as complete successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas.yml#/ReadingDto"
+        "404":
+          $ref: "./components/responses.yml#/components/responses/NotFound"
+        "500":
+          $ref: "./components/responses.yml#/components/responses/InternalServerError"
 
   /books:
     get:
