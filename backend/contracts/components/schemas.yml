@@ -28,6 +28,7 @@ Page:
     empty:
       type: boolean
       description: Indicates if the page is empty
+
 BookPage:
   allOf:
     - $ref: "#/Page"
@@ -37,6 +38,17 @@ BookPage:
       type: array
       items:
         $ref: "#/BookDTO"
+
+UserPage:
+  allOf:
+    - $ref: "#/Page"
+  description: Paginated response for users
+  properties:
+    content:
+      type: array
+      items:
+        $ref: "#/UserDTO"
+
 UserDTO:
   type: object
   properties:
@@ -49,7 +61,15 @@ UserDTO:
       type: string
   required:
     - username
-    - email
+
+UserWithReadingsDTO:
+  allOf:
+    - $ref: "#/UserDTO"
+  properties:
+    readings:
+      type: array
+      items:
+        $ref: "#/ReadingDto"
 
 BookDTO:
   type: object
@@ -80,3 +100,18 @@ BookDTO:
     coverImageUrl:
       type: string
       format: uri
+
+ReadingDto:
+  type: object
+  properties:
+    book:
+      $ref: "#/BookDTO"
+    startedAt:
+      type: string
+      format: date
+    finishedAt:
+      type: string
+      format: date
+  required:
+    - book
+    - startedAt

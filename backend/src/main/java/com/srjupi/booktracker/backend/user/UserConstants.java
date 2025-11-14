@@ -12,6 +12,10 @@ public final class UserConstants {
     public static final String DETAIL_USERNAME_ALREADY_EXISTS = "User with username %s already exists";
     public static final String DETAIL_EMAIL_ALREADY_EXISTS = "User with email %s already exists";
 
+    public static final String INVALID_USER_DATA = "Invalid User Data";
+    public static final String DETAIL_MISSING_USERNAME = "Username is required";
+    public static final String DETAIL_MISSING_EMAIL = "Email is required";
+
     //Private constructor to prevent instantiation
     private UserConstants() {}
 }

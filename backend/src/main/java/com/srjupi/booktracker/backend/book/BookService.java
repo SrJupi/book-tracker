@@ -1,5 +1,7 @@
 package com.srjupi.booktracker.backend.book;
 
+import com.srjupi.booktracker.backend.api.dto.BookDTO;
+import com.srjupi.booktracker.backend.api.dto.BookPage;
 import com.srjupi.booktracker.backend.book.exceptions.Book404Exception;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,25 +17,27 @@ import java.util.Optional;
 public class BookService {
 
     private final BookRepository repository;
+    private final BookMapper mapper;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public BookService(BookRepository repository) {
+    public BookService(BookRepository repository, BookMapper mapper) {
+        this.mapper = mapper;
         this.repository = repository;
     }
 
-    public BookEntity createBook(BookEntity entity) {
+    public BookDTO createBook(BookDTO dto) {
         // Basic check to avoid duplicate books based on ISBN
         // Need to add check for title and authors if ISBN is null
         logger.info("createBook called");
-        if (entity.getIsbn() != null) {
-            Optional<BookEntity> existingBook = repository.findByIsbn(entity.getIsbn());
+        if (dto.getIsbn() != null) {
+            Optional<BookEntity> existingBook = repository.findByIsbn(dto.getIsbn());
             if (existingBook.isPresent()) {
                 logger.info("Book with ISBN: {} already exists with id: {}. Returning existing book.",
-                        entity.getIsbn(), existingBook.get().getId());
-                return existingBook.get();
+                        dto.getIsbn(), existingBook.get().getId());
+                return mapper.toDTO(existingBook.get());
             }
         }
-        return repository.save(entity);
+        return mapper.toDTO(repository.save(mapper.toEntity(dto)));
     }
 
     public void deleteBookById(Long id) {
@@ -42,8 +46,13 @@ public class BookService {
         repository.delete(book);
     }
 
-    public BookEntity getBookById(Long id) {
-        logger.info("getBookById called with id: {}", id);
+    public BookDTO getBookDtoById(Long id) {
+        logger.info("getBookByIdDTO called with id: {}", id);
+        BookEntity book = getBookById(id);
+        return mapper.toDTO(book);
+    }
+
+    private BookEntity getBookById(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> {
                     logger.info("Book with id: {} not found. Throwing 404 Exception.", id);
@@ -51,23 +60,23 @@ public class BookService {
                 });
     }
 
-    public List<BookEntity> getBooks() {
+    public List<BookDTO> getBooks() {
         logger.info("getBooks called");
-        return repository.findAll();
+        return mapper.toDTO(repository.findAll());
     }
 
-    public BookEntity updateBook(Long id, BookEntity entity) {
+    public BookDTO updateBook(Long id, BookDTO entity) {
         logger.info("updateBook called with id: {}", id);
         BookEntity existingBook = getBookById(id);
         existingBook.setTitle(entity.getTitle());
-        existingBook.setAuthors(entity.getAuthors());
+        existingBook.setAuthors(String.join(",", entity.getAuthors()));
         existingBook.setIsbn(entity.getIsbn());
-        return repository.save(existingBook);
+        return mapper.toDTO(repository.save(existingBook));
     }
 
-    public Page<BookEntity> searchBooks(String title, String authors, String isbn,
-                                     String publisher, String language, Integer page,
-                                     Integer size) {
+    public BookPage searchBooks(String title, String authors, String isbn,
+                                String publisher, String language, Integer page,
+                                Integer size) {
         logger.info("searchBooks called");
         Specification<BookEntity> specification = Specification.unrestricted();
         if (title != null && !title.isEmpty()) {
@@ -86,7 +95,6 @@ public class BookService {
             specification = specification.and(BookSpecification.hasLanguage(language));
         }
         Page<BookEntity> resultPage = repository.findAll(specification, PageRequest.of(page, size));
-        logger.info(resultPage.toString());
-        return resultPage;
+        return mapper.toDTO(resultPage);
     }
 }

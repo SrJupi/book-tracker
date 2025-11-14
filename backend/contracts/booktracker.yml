@@ -8,6 +8,8 @@ paths:
     get:
       summary: Get all users
       operationId: getUsers
+      tags:
+        - Users
       responses:
         "200":
           description: List of users
@@ -23,6 +25,8 @@ paths:
     post:
       summary: Create a new user
       operationId: createUser
+      tags:
+        - Users
       requestBody:
         required: true
         content:
@@ -54,6 +58,8 @@ paths:
     get:
       summary: Get user by ID
       operationId: getUserById
+      tags:
+        - Users
       responses:
         "200":
           description: User found
@@ -68,6 +74,8 @@ paths:
     put:
       summary: Update user by ID
       operationId: updateUserById
+      tags:
+        - Users
       requestBody:
         required: true
         content:
@@ -89,9 +97,36 @@ paths:
     delete:
       summary: Delete user by id
       operationId: deleteUser
+      tags:
+        - Users
       responses:
         "204":
           description: User deleted successfully
+        "404":
+          $ref: "./components/responses.yml#/components/responses/NotFound"
+        "500":
+          $ref: "./components/responses.yml#/components/responses/InternalServerError"
+
+  /users/{id}/readings:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+    get:
+      summary: Get user with their readings by user ID
+      operationId: getUserWithReadings
+      tags:
+        - Users
+      responses:
+        "200":
+          description: User with readings found
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas.yml#/UserWithReadingsDTO"
         "404":
           $ref: "./components/responses.yml#/components/responses/NotFound"
         "500":
@@ -101,6 +136,8 @@ paths:
     get:
       summary: Get all books
       operationId: getBooks
+      tags:
+        - Books
       responses:
         "200":
           description: List of books
@@ -115,6 +152,8 @@ paths:
     post:
       summary: Create a new book
       operationId: createBook
+      tags:
+        - Books
       requestBody:
         required: true
         content:
@@ -140,6 +179,8 @@ paths:
       summary: Search books by their attributes
       description: Search books by title, authors, ISBN, publisher, or language.
       operationId: searchBooks
+      tags:
+        - Books
       parameters:
         - name: title
           in: query
@@ -209,6 +250,8 @@ paths:
     get:
       summary: Get book by ID
       operationId: getBookById
+      tags:
+        - Books
       responses:
         "200":
           description: Book found
@@ -223,6 +266,8 @@ paths:
     put:
       summary: Update book by ID
       operationId: updateBookById
+      tags:
+        - Books
       requestBody:
         required: true
         content:
@@ -244,6 +289,8 @@ paths:
     delete:
       summary: Delete book by id
       operationId: deleteBook
+      tags:
+        - Books
       responses:
         "204":
           description: Book deleted successfully

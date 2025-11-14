@@ -3,7 +3,7 @@ package com.srjupi.booktracker.backend.book;
 import com.srjupi.booktracker.backend.common.base.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import lombok.AllArgsConstructor;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,9 +14,11 @@ import lombok.Setter;
 @NoArgsConstructor
 public class BookEntity extends BaseEntity {
 
+    @NotNull
     @Column(nullable = false)
     private String title;
 
+    @NotNull
     @Column(nullable = false)
     private String authors;
 
@@ -27,6 +29,7 @@ public class BookEntity extends BaseEntity {
 
     private String language;
 
+    @NotNull
     @Column(nullable = false)
     private Integer pages;
 
