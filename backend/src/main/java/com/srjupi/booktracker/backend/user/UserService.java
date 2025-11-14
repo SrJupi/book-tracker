@@ -1,6 +1,8 @@
 package com.srjupi.booktracker.backend.user;
 
 import com.srjupi.booktracker.backend.api.dto.UserDTO;
+import com.srjupi.booktracker.backend.api.dto.UserWithReadingsDTO;
+import com.srjupi.booktracker.backend.user.exceptions.User400Exception;
 import com.srjupi.booktracker.backend.user.exceptions.User404Exception;
 import com.srjupi.booktracker.backend.user.exceptions.User409Exception;
 import org.slf4j.Logger;
@@ -22,6 +24,14 @@ public class UserService {
 
     public UserDTO createUser(UserDTO dto) {
         logger.info("createUser called");
+        if (dto.getUsername() == null) {
+            logger.info("Username is null. Throwing 400 Exception.");
+            throw User400Exception.fromMissingUsername();
+        }
+        if (dto.getEmail() == null) {
+            logger.info("Email is null. Throwing 400 Exception.");
+            throw User400Exception.fromMissingEmail();
+        }
         if (userRepository.existsByEmail(dto.getEmail())) {
             logger.info("User with email: {} already exists. Throwing 409 Exception.", dto.getEmail());
             throw User409Exception.fromEmail(dto.getEmail());

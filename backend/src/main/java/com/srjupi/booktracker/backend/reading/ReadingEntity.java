@@ -1,4 +1,4 @@
-package com.srjupi.booktracker.backend.readingsession;
+package com.srjupi.booktracker.backend.reading;
 
 import com.srjupi.booktracker.backend.book.BookEntity;
 import com.srjupi.booktracker.backend.common.base.BaseEntity;
@@ -27,7 +27,7 @@ public class ReadingEntity extends BaseEntity {
 
     @NotNull
     @Column(nullable = false)
-    private LocalDate startDate;
+    private LocalDate startedAt;
 
-    private LocalDate endDate;
+    private LocalDate endedAt;
 }

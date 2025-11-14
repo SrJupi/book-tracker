@@ -20,7 +20,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     void deleteByUsername(String username);
     void deleteByEmail(String email);
 
-    @EntityGraph(attributePaths = {"readingSessions", "readingSessions.book"})
+    @EntityGraph(attributePaths = {"readings", "readings.book"})
     @Query("SELECT u FROM UserEntity u WHERE u.id = :id")
-    Optional<UserEntity> findByIdWithReadingSessions(@Param("id") Long id);
+    Optional<UserEntity> findByIdWithReadings(@Param("id") Long id);
 }

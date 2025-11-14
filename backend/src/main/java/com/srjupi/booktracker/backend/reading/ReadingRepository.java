@@ -1,4 +1,4 @@
-package com.srjupi.booktracker.backend.readingsession;
+package com.srjupi.booktracker.backend.reading;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

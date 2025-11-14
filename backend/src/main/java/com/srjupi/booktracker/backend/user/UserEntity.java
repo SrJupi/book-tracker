@@ -1,7 +1,7 @@
 package com.srjupi.booktracker.backend.user;
 
 import com.srjupi.booktracker.backend.common.base.BaseEntity;
-import com.srjupi.booktracker.backend.readingsession.ReadingEntity;
+import com.srjupi.booktracker.backend.reading.ReadingEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -30,6 +30,6 @@ public class UserEntity extends BaseEntity {
     private String email;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
-    private List<ReadingEntity> readingSessions;
+    private List<ReadingEntity> readings;
 
 }
