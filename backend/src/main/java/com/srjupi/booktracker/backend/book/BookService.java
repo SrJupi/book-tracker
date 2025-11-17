@@ -1,6 +1,6 @@
 package com.srjupi.booktracker.backend.book;
 
-import com.srjupi.booktracker.backend.api.dto.BookDTO;
+import com.srjupi.booktracker.backend.api.dto.BookDto;
 import com.srjupi.booktracker.backend.api.dto.BookPage;
 import com.srjupi.booktracker.backend.book.exceptions.Book404Exception;
 import org.slf4j.Logger;
@@ -25,7 +25,7 @@ public class BookService {
         this.repository = repository;
     }
 
-    public BookDTO createBook(BookDTO dto) {
+    public BookDto createBook(BookDto dto) {
         // Basic check to avoid duplicate books based on ISBN
         // Need to add check for title and authors if ISBN is null
         logger.info("createBook called");
@@ -34,10 +34,10 @@ public class BookService {
             if (existingBook.isPresent()) {
                 logger.info("Book with ISBN: {} already exists with id: {}. Returning existing book.",
                         dto.getIsbn(), existingBook.get().getId());
-                return mapper.toDTO(existingBook.get());
+                return mapper.toDto(existingBook.get());
             }
         }
-        return mapper.toDTO(repository.save(mapper.toEntity(dto)));
+        return mapper.toDto(repository.save(mapper.toEntity(dto)));
     }
 
     public void deleteBookById(Long id) {
@@ -46,10 +46,10 @@ public class BookService {
         repository.delete(book);
     }
 
-    public BookDTO getBookDtoById(Long id) {
-        logger.info("getBookByIdDTO called with id: {}", id);
+    public BookDto getBookDtoById(Long id) {
+        logger.info("getBookByIdDto called with id: {}", id);
         BookEntity book = getBookById(id);
-        return mapper.toDTO(book);
+        return mapper.toDto(book);
     }
 
     private BookEntity getBookById(Long id) {
@@ -60,18 +60,18 @@ public class BookService {
                 });
     }
 
-    public List<BookDTO> getBooks() {
+    public List<BookDto> getBooks() {
         logger.info("getBooks called");
-        return mapper.toDTO(repository.findAll());
+        return mapper.toDto(repository.findAll());
     }
 
-    public BookDTO updateBook(Long id, BookDTO entity) {
+    public BookDto updateBook(Long id, BookDto entity) {
         logger.info("updateBook called with id: {}", id);
         BookEntity existingBook = getBookById(id);
         existingBook.setTitle(entity.getTitle());
         existingBook.setAuthors(String.join(",", entity.getAuthors()));
         existingBook.setIsbn(entity.getIsbn());
-        return mapper.toDTO(repository.save(existingBook));
+        return mapper.toDto(repository.save(existingBook));
     }
 
     public BookPage searchBooks(String title, String authors, String isbn,
@@ -95,6 +95,6 @@ public class BookService {
             specification = specification.and(BookSpecification.hasLanguage(language));
         }
         Page<BookEntity> resultPage = repository.findAll(specification, PageRequest.of(page, size));
-        return mapper.toDTO(resultPage);
+        return mapper.toDto(resultPage);
     }
 }

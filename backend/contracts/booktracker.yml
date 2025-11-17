@@ -18,7 +18,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "./components/schemas.yml#/UserDTO"
+                  $ref: "./components/schemas.yml#/UserDto"
         "500":
           $ref: "./components/responses.yml#/components/responses/InternalServerError"
 
@@ -32,14 +32,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "./components/schemas.yml#/UserDTO"
+              $ref: "./components/schemas.yml#/UserDto"
       responses:
         "201":
           description: User created successfully
           content:
             application/json:
               schema:
-                $ref: "./components/schemas.yml#/UserDTO"
+                $ref: "./components/schemas.yml#/UserDto"
         "400":
           $ref: "./components/responses.yml#/components/responses/BadRequest"
         "409":
@@ -66,7 +66,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "./components/schemas.yml#/UserDTO"
+                $ref: "./components/schemas.yml#/UserDto"
         "404":
           $ref: "./components/responses.yml#/components/responses/NotFound"
         "500":
@@ -81,14 +81,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "./components/schemas.yml#/UserDTO"
+              $ref: "./components/schemas.yml#/UserDto"
       responses:
         "200":
           description: User updated successfully
           content:
             application/json:
               schema:
-                $ref: "./components/schemas.yml#/UserDTO"
+                $ref: "./components/schemas.yml#/UserDto"
         "404":
           $ref: "./components/responses.yml#/components/responses/NotFound"
         "500":
@@ -126,7 +126,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "./components/schemas.yml#/UserWithReadingsDTO"
+                $ref: "./components/schemas.yml#/UserWithReadingsDto"
         "404":
           $ref: "./components/responses.yml#/components/responses/NotFound"
         "500":
@@ -271,7 +271,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "./components/schemas.yml#/BookDTO"
+                  $ref: "./components/schemas.yml#/BookDto"
         "500":
           $ref: "./components/responses.yml#/components/responses/InternalServerError"
     post:
@@ -284,14 +284,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "./components/schemas.yml#/BookDTO"
+              $ref: "./components/schemas.yml#/BookDto"
       responses:
         "201":
           description: Book created successfully
           content:
             application/json:
               schema:
-                $ref: "./components/schemas.yml#/BookDTO"
+                $ref: "./components/schemas.yml#/BookDto"
         "400":
           $ref: "./components/responses.yml#/components/responses/BadRequest"
         "409":
@@ -383,7 +383,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "./components/schemas.yml#/BookDTO"
+                $ref: "./components/schemas.yml#/BookDto"
         "404":
           $ref: "./components/responses.yml#/components/responses/NotFound"
         "500":
@@ -398,14 +398,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "./components/schemas.yml#/BookDTO"
+              $ref: "./components/schemas.yml#/BookDto"
       responses:
         "200":
           description: Book updated successfully
           content:
             application/json:
               schema:
-                $ref: "./components/schemas.yml#/BookDTO"
+                $ref: "./components/schemas.yml#/BookDto"
         "404":
           $ref: "./components/responses.yml#/components/responses/NotFound"
         "500":

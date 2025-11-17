@@ -1,7 +1,7 @@
 package com.srjupi.booktracker.backend.user;
 
-import com.srjupi.booktracker.backend.api.dto.UserDTO;
-import com.srjupi.booktracker.backend.api.dto.UserWithReadingsDTO;
+import com.srjupi.booktracker.backend.api.dto.UserDto;
+import com.srjupi.booktracker.backend.api.dto.UserWithReadingsDto;
 import com.srjupi.booktracker.backend.user.exceptions.User400Exception;
 import com.srjupi.booktracker.backend.user.exceptions.User404Exception;
 import com.srjupi.booktracker.backend.user.exceptions.User409Exception;
@@ -22,7 +22,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public UserDTO createUser(UserDTO dto) {
+    public UserDto createUser(UserDto dto) {
         logger.info("createUser called");
         if (dto.getUsername() == null) {
             logger.info("Username is null. Throwing 400 Exception.");
@@ -41,26 +41,26 @@ public class UserService {
             throw User409Exception.fromUsername(dto.getUsername());
         }
         UserEntity user = mapper.toEntity(dto);
-        return mapper.toDTO(userRepository.save(user));
+        return mapper.toDto(userRepository.save(user));
     }
 
-    public UserDTO updateUser(Long id, UserDTO updatedData) {
+    public UserDto updateUser(Long id, UserDto updatedData) {
         logger.info("updateUser called with id: {}", id);
         UserEntity existingUser = getUserById(id);
         existingUser.setUsername(updatedData.getUsername());
         existingUser.setEmail(updatedData.getEmail());
-        return mapper.toDTO(userRepository.save(existingUser));
+        return mapper.toDto(userRepository.save(existingUser));
     }
 
-    public List<UserDTO> getUsers() {
+    public List<UserDto> getUsers() {
         logger.info("getUsers called");
-        return mapper.toDTO(userRepository.findAll());
+        return mapper.toDto(userRepository.findAll());
     }
 
-    public UserDTO getDtoById(Long id) {
+    public UserDto getDtoById(Long id) {
         logger.info("getDtoById called with id: {}", id);
         UserEntity user = getUserById(id);
-        return mapper.toDTO(user);
+        return mapper.toDto(user);
     }
 
     private UserEntity getUserById(Long id) {
@@ -107,12 +107,12 @@ public class UserService {
         userRepository.delete(user);
     }
 
-    public UserWithReadingsDTO getUserWithReadingsById(Long id) {
+    public UserWithReadingsDto getUserWithReadingsById(Long id) {
         logger.info("getUserWithReadingsById called with id: {}", id);
         UserEntity user = userRepository.findByIdWithReadings(id).orElseThrow(() -> {
             logger.info("User with id: {} not found. Throwing 404 Exception.", id);
             return User404Exception.fromId(id);
         });
-        return mapper.toUserWithReadingsDTO(user);
+        return mapper.toUserWithReadingsDto(user);
     }
 }

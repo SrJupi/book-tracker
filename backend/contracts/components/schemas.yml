@@ -37,7 +37,7 @@ BookPage:
     content:
       type: array
       items:
-        $ref: "#/BookDTO"
+        $ref: "#/BookDto"
 
 UserPage:
   allOf:
@@ -47,9 +47,9 @@ UserPage:
     content:
       type: array
       items:
-        $ref: "#/UserDTO"
+        $ref: "#/UserDto"
 
-UserDTO:
+UserDto:
   type: object
   properties:
     id:
@@ -62,16 +62,16 @@ UserDTO:
   required:
     - username
 
-UserWithReadingsDTO:
+UserWithReadingsDto:
   allOf:
-    - $ref: "#/UserDTO"
+    - $ref: "#/UserDto"
   properties:
     readings:
       type: array
       items:
         $ref: "#/ReadingDto"
 
-BookDTO:
+BookDto:
   type: object
   required:
     - title
@@ -105,7 +105,7 @@ ReadingDto:
   type: object
   properties:
     book:
-      $ref: "#/BookDTO"
+      $ref: "#/BookDto"
     startedAt:
       type: string
       format: date

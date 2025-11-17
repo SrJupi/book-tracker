@@ -1,7 +1,7 @@
 package com.srjupi.booktracker.backend.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.srjupi.booktracker.backend.api.dto.UserDTO;
+import com.srjupi.booktracker.backend.api.dto.UserDto;
 import com.srjupi.booktracker.backend.user.exceptions.User404Exception;
 import com.srjupi.booktracker.backend.user.exceptions.User409Exception;
 import org.junit.jupiter.api.Test;
@@ -36,14 +36,14 @@ class UserControllerTest {
 
     @Test
     void createUser_ShouldReturn201_WhenUserIsValid() throws Exception {
-        UserDTO requestDTO = createValidUserDTO();
-        UserDTO responseDTO = createValidUserDTOWithId();
+        UserDto requestDto = createValidUserDto();
+        UserDto responseDto = createValidUserDtoWithId();
 
-        when(userService.createUser(requestDTO)).thenReturn(responseDTO);
+        when(userService.createUser(requestDto)).thenReturn(responseDto);
 
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestDTO)))
+                        .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "/users/1"))
                 .andExpect(jsonPath("$.id").value(1))
@@ -53,12 +53,12 @@ class UserControllerTest {
 
     @Test
     void createUser_ShouldReturn409_WhenUserAlreadyExists() throws Exception {
-        UserDTO requestDTO = createValidUserDTO();
-        when(userService.createUser(requestDTO)).thenThrow(User409Exception.fromUsername(requestDTO.getUsername()));
+        UserDto requestDto = createValidUserDto();
+        when(userService.createUser(requestDto)).thenThrow(User409Exception.fromUsername(requestDto.getUsername()));
 
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestDTO)))
+                        .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.title"). value(USER_ALREADY_EXISTS))
                 .andExpect(jsonPath("$.status").value(CONFLICT.value()));
@@ -71,7 +71,7 @@ class UserControllerTest {
 
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(createValidUserDTO())))
+                        .content(objectMapper.writeValueAsString(createValidUserDto())))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.title").value(INTERNAL_SERVER_ERROR.getReasonPhrase()))
                 .andExpect(jsonPath("$.status").value(INTERNAL_SERVER_ERROR.value()));
@@ -99,9 +99,9 @@ class UserControllerTest {
     @Test
     void getUserById_ShouldReturn200_WhenUserExists() throws Exception {
         Long userId = 1L;
-        UserDTO userDTO = createValidUserDTOWithId();
+        UserDto userDto = createValidUserDtoWithId();
 
-        when(userService.getDtoById(userId)).thenReturn(userDTO);
+        when(userService.getDtoById(userId)).thenReturn(userDto);
 
         mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/users/{id}", userId))
                 .andExpect(status().isOk())
@@ -130,14 +130,14 @@ class UserControllerTest {
     @Test
     void updateUserById_shouldReturn200_WhenUserIsUpdated() throws Exception {
         Long userId = 1L;
-        UserDTO requestDTO = createValidUserDTO();
-        UserDTO responseDTO = createValidUserDTOWithId();
+        UserDto requestDto = createValidUserDto();
+        UserDto responseDto = createValidUserDtoWithId();
 
-        when(userService.updateUser(userId, requestDTO)).thenReturn(responseDTO);
+        when(userService.updateUser(userId, requestDto)).thenReturn(responseDto);
 
         mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put("/users/{id}", userId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestDTO)))
+                        .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.username").value(DEFAULT_USERNAME))
@@ -147,12 +147,12 @@ class UserControllerTest {
     @Test
     void updateUserById_ShouldReturn404_WhenUserDoesNotExist() throws Exception {
         Long id = 1L;
-        UserDTO requestDTO = createValidUserDTO();
+        UserDto requestDto = createValidUserDto();
         when(userService.updateUser(anyLong(), any())).thenThrow(User404Exception.fromId(id));
 
         mockMvc.perform(put("/users/{id}", id)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(requestDTO)))
+                .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.title").value(USER_NOT_FOUND))
                 .andExpect(jsonPath("$.status").value(NOT_FOUND.value()));

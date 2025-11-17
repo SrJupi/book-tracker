@@ -1,8 +1,8 @@
 package com.srjupi.booktracker.backend.user;
 
 import com.srjupi.booktracker.backend.api.UsersApi;
-import com.srjupi.booktracker.backend.api.dto.UserDTO;
-import com.srjupi.booktracker.backend.api.dto.UserWithReadingsDTO;
+import com.srjupi.booktracker.backend.api.dto.UserDto;
+import com.srjupi.booktracker.backend.api.dto.UserWithReadingsDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -22,9 +22,9 @@ public class UserController implements UsersApi {
     }
 
     @Override
-    public ResponseEntity<UserDTO> createUser(UserDTO userDTO) {
-        logger.info("POST /users called with body: {}", userDTO);
-        UserDTO createdUser = service.createUser(userDTO);
+    public ResponseEntity<UserDto> createUser(UserDto userDto) {
+        logger.info("POST /users called with body: {}", userDto);
+        UserDto createdUser = service.createUser(userDto);
         URI location = URI.create(String.format("/users/%s", createdUser.getId()));
         logger.info("POST /users created user with id: {} at location: {}", createdUser.getId(), location);
         return ResponseEntity.created(location).body(createdUser);
@@ -39,33 +39,33 @@ public class UserController implements UsersApi {
     }
 
     @Override
-    public ResponseEntity<UserDTO> getUserById(Long id) {
+    public ResponseEntity<UserDto> getUserById(Long id) {
         logger.info("GET /users/{} called", id);
-        UserDTO userDTO = service.getDtoById(id);
-        logger.info("GET /users/{} returning: {}", id, userDTO);
-        return ResponseEntity.ok(userDTO);
+        UserDto userDto = service.getDtoById(id);
+        logger.info("GET /users/{} returning: {}", id, userDto);
+        return ResponseEntity.ok(userDto);
     }
 
     @Override
-    public ResponseEntity<UserWithReadingsDTO> getUserWithReadings(Long id) {
+    public ResponseEntity<UserWithReadingsDto> getUserWithReadings(Long id) {
         logger.info("GET /users/{}/readings called", id);
-        UserWithReadingsDTO userWithReadingsDTO = service.getUserWithReadingsById(id);
-        logger.info("GET /users/{}/readings returning: {}", id, userWithReadingsDTO);
-        return ResponseEntity.ok(userWithReadingsDTO);
+        UserWithReadingsDto userWithReadingsDto = service.getUserWithReadingsById(id);
+        logger.info("GET /users/{}/readings returning: {}", id, userWithReadingsDto);
+        return ResponseEntity.ok(userWithReadingsDto);
     }
 
     @Override
-    public ResponseEntity<List<UserDTO>> getUsers() {
+    public ResponseEntity<List<UserDto>> getUsers() {
         logger.info("GET /users called");
-        List<UserDTO> users = service.getUsers();
+        List<UserDto> users = service.getUsers();
         logger.info("GET /users returning {} users", users.size());
         return ResponseEntity.ok(users);
     }
 
     @Override
-    public ResponseEntity<UserDTO> updateUserById(Long id, UserDTO userDTO) {
-        logger.info("PUT /users/{} called with body: {}", id, userDTO);
-        UserDTO updatedUser = service.updateUser(id, userDTO);
+    public ResponseEntity<UserDto> updateUserById(Long id, UserDto userDto) {
+        logger.info("PUT /users/{} called with body: {}", id, userDto);
+        UserDto updatedUser = service.updateUser(id, userDto);
         logger.info("PUT /users/{} updated user to: {}", id, updatedUser);
         return ResponseEntity.ok(updatedUser);
     }

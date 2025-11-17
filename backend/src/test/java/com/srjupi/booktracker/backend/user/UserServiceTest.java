@@ -1,6 +1,6 @@
 package com.srjupi.booktracker.backend.user;
 
-import com.srjupi.booktracker.backend.api.dto.UserDTO;
+import com.srjupi.booktracker.backend.api.dto.UserDto;
 import com.srjupi.booktracker.backend.user.exceptions.User404Exception;
 import com.srjupi.booktracker.backend.user.exceptions.User409Exception;
 import org.junit.jupiter.api.Test;
@@ -32,14 +32,14 @@ class UserServiceTest {
     @Test
     void createUser_ShouldCreateUser_WhenUserIsValid() {
         UserEntity user = createValidUser();
-        UserDTO requestDTO = createValidUserDTO();
-        UserDTO responseDTO = createValidUserDTOWithId();
+        UserDto requestDto = createValidUserDto();
+        UserDto responseDto = createValidUserDtoWithId();
         when(userRepository.existsByEmail(anyString())).thenReturn(false);
         when(userRepository.existsByUsername(anyString())).thenReturn(false);
         when(userRepository.save(any(UserEntity.class))).thenReturn(createValidUserWithId());
-        when(userMapper.toEntity(any(UserDTO.class))).thenReturn(user);
-        when(userMapper.toDTO(any(UserEntity.class))).thenReturn(responseDTO);
-        UserDTO createdUser = userService.createUser(requestDTO);
+        when(userMapper.toEntity(any(UserDto.class))).thenReturn(user);
+        when(userMapper.toDto(any(UserEntity.class))).thenReturn(responseDto);
+        UserDto createdUser = userService.createUser(requestDto);
         assertNotNull(createdUser);
         assertEquals(1L, createdUser.getId());
         assertEquals(user.getUsername(), createdUser.getUsername());
@@ -49,33 +49,33 @@ class UserServiceTest {
 
     @Test
     void createUser_ShouldThrowException_WhenEmailAlreadyExists() {
-        UserDTO requestDTO = createValidUserDTO();
+        UserDto requestDto = createValidUserDto();
         when(userRepository.existsByEmail(anyString())).thenReturn(true);
-        Exception exception = assertThrows(User409Exception.class, () -> userService.createUser(requestDTO));
-        assertEquals(String.format(DETAIL_EMAIL_ALREADY_EXISTS, requestDTO.getEmail()), exception.getMessage());
+        Exception exception = assertThrows(User409Exception.class, () -> userService.createUser(requestDto));
+        assertEquals(String.format(DETAIL_EMAIL_ALREADY_EXISTS, requestDto.getEmail()), exception.getMessage());
         verify(userRepository, never()).save(any());
     }
 
     @Test
     void createUser_ShouldThrowException_WhenUserNameAlreadyExists() {
-        UserDTO requestDTO = createValidUserDTO();
+        UserDto requestDto = createValidUserDto();
         when(userRepository.existsByEmail(anyString())).thenReturn(false);
         when(userRepository.existsByUsername(anyString())).thenReturn(true);
-        Exception exception = assertThrows(User409Exception.class, () -> userService.createUser(requestDTO));
-        assertEquals(String.format(DETAIL_USERNAME_ALREADY_EXISTS, requestDTO.getUsername()), exception.getMessage());
+        Exception exception = assertThrows(User409Exception.class, () -> userService.createUser(requestDto));
+        assertEquals(String.format(DETAIL_USERNAME_ALREADY_EXISTS, requestDto.getUsername()), exception.getMessage());
         verify(userRepository, never()).save(any());
     }
 
     @Test
     void updateUser_ShouldUpdateUser_WhenUserExists() {
         UserEntity existingUser = createValidUserWithId();
-        UserDTO requestDTO = createValidUserDTO();
-        UserDTO responseDTO = createValidUserDTOWithId();
-        responseDTO.setUsername("newusername");
+        UserDto requestDto = createValidUserDto();
+        UserDto responseDto = createValidUserDtoWithId();
+        responseDto.setUsername("newusername");
         when(userRepository.findById(1L)).thenReturn(Optional.of(existingUser));
         when(userRepository.save(existingUser)).thenReturn(existingUser);
-        when(userMapper.toDTO(existingUser)).thenReturn(responseDTO);
-        UserDTO updatedUser = userService.updateUser(1L, requestDTO);
+        when(userMapper.toDto(existingUser)).thenReturn(responseDto);
+        UserDto updatedUser = userService.updateUser(1L, requestDto);
         assertNotNull(updatedUser);
         assertEquals(existingUser.getId(), updatedUser.getId());
         assertEquals("newusername", updatedUser.getUsername());
@@ -87,7 +87,7 @@ class UserServiceTest {
     void updateUser_ShouldThrowException_WhenUserDoesNotExist() {
         Long id = 1L;
         when(userRepository.findById(id)).thenReturn(Optional.empty());
-        Exception exception = assertThrows(User404Exception.class, () -> userService.updateUser(id, createValidUserDTO()));
+        Exception exception = assertThrows(User404Exception.class, () -> userService.updateUser(id, createValidUserDto()));
         assertEquals(String.format(DETAIL_NOT_FOUND_BY_ID, id), exception.getMessage());
         verify(userRepository, never()).save(any());
     }
@@ -101,10 +101,10 @@ class UserServiceTest {
     @Test
     void getUserById_ShouldReturnUser_WhenUserExists() {
         UserEntity existingUser = createValidUserWithId();
-        UserDTO responseDTO = createValidUserDTOWithId();
+        UserDto responseDto = createValidUserDtoWithId();
         when(userRepository.findById(1L)).thenReturn(Optional.of(existingUser));
-        when(userMapper.toDTO(existingUser)).thenReturn(responseDTO);
-        UserDTO user = userService.getDtoById(1L);
+        when(userMapper.toDto(existingUser)).thenReturn(responseDto);
+        UserDto user = userService.getDtoById(1L);
         assertNotNull(user);
         assertEquals(existingUser.getId(), user.getId());
         assertEquals(existingUser.getUsername(), user.getUsername());

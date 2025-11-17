@@ -1,6 +1,6 @@
 package com.srjupi.booktracker.backend.common.datafactory;
 
-import com.srjupi.booktracker.backend.api.dto.BookDTO;
+import com.srjupi.booktracker.backend.api.dto.BookDto;
 import com.srjupi.booktracker.backend.book.BookEntity;
 
 import java.util.List;
@@ -10,7 +10,7 @@ public class BookTestDataFactory {
     //CONSTANTS FOR TEST DATA
     public static final String DEFAULT_TITLE = "The Pragmatic Programmer";
     public static final String DEFAULT_ENTITY_AUTHOR = "Andy Hunt,Dave Thomas";
-    public static final List<String> DEFAULT_DTO_AUTHOR = List.of(DEFAULT_ENTITY_AUTHOR.split(","));
+    public static final List<String> DEFAULT_Dto_AUTHOR = List.of(DEFAULT_ENTITY_AUTHOR.split(","));
     public static final String DEFAULT_ISBN = "978013595705";
     public static final Integer DEFAULT_PAGES = 352;
 
@@ -37,24 +37,24 @@ public class BookTestDataFactory {
         return book;
     }
 
-    public static BookDTO createValidBookDto() {
-        BookDTO bookDTO = new BookDTO();
-        bookDTO.setTitle(DEFAULT_TITLE);
-        bookDTO.setAuthors(DEFAULT_DTO_AUTHOR);
-        bookDTO.setPages(DEFAULT_PAGES);
-        return bookDTO;
+    public static BookDto createValidBookDto() {
+        BookDto bookDto = new BookDto();
+        bookDto.setTitle(DEFAULT_TITLE);
+        bookDto.setAuthors(DEFAULT_Dto_AUTHOR);
+        bookDto.setPages(DEFAULT_PAGES);
+        return bookDto;
     }
 
-    public static BookDTO createValidBookDtoWithId() {
-        BookDTO bookDTO = createValidBookDto();
-        bookDTO.setId(1L);
-        return bookDTO;
+    public static BookDto createValidBookDtoWithId() {
+        BookDto bookDto = createValidBookDto();
+        bookDto.setId(1L);
+        return bookDto;
     }
 
-    public static BookDTO createValidBookDtoWithISBN() {
-        BookDTO bookDTO = createValidBookDto();
-        bookDTO.setIsbn(DEFAULT_ISBN);
-        return bookDTO;
+    public static BookDto createValidBookDtoWithISBN() {
+        BookDto bookDto = createValidBookDto();
+        bookDto.setIsbn(DEFAULT_ISBN);
+        return bookDto;
     }
 
     // Private constructor to prevent instantiation

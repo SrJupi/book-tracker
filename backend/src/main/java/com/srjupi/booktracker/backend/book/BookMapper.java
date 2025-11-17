@@ -1,6 +1,6 @@
 package com.srjupi.booktracker.backend.book;
 
-import com.srjupi.booktracker.backend.api.dto.BookDTO;
+import com.srjupi.booktracker.backend.api.dto.BookDto;
 import com.srjupi.booktracker.backend.api.dto.BookPage;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -14,15 +14,15 @@ public interface BookMapper {
 
     @Mapping(target = "authors", expression = "java(listToString(dto.getAuthors()))")
     @Mapping(target = "coverImageUrl", expression = "java(uriToString(dto.getCoverImageUrl()))")
-    BookEntity toEntity(BookDTO dto);
+    BookEntity toEntity(BookDto dto);
 
     @Mapping(target = "authors", expression = "java(stringToList(entity.getAuthors()))")
     @Mapping(target = "coverImageUrl", expression = "java(stringToURI(entity.getCoverImageUrl()))")
-    BookDTO toDTO(BookEntity entity);
-    List<BookEntity> toEntity(List<BookDTO> dtos);
-    List<BookDTO> toDTO(List<BookEntity> entities);
+    BookDto toDto(BookEntity entity);
+    List<BookEntity> toEntity(List<BookDto> dtos);
+    List<BookDto> toDto(List<BookEntity> entities);
 
-    BookPage toDTO(Page<BookEntity> entityPage);
+    BookPage toDto(Page<BookEntity> entityPage);
 
     default List<String> stringToList(String authors) {
         return List.of(authors.split(","));

@@ -1,6 +1,6 @@
 package com.srjupi.booktracker.backend.book;
 
-import com.srjupi.booktracker.backend.api.dto.BookDTO;
+import com.srjupi.booktracker.backend.api.dto.BookDto;
 import com.srjupi.booktracker.backend.api.dto.BookPage;
 import com.srjupi.booktracker.backend.book.exceptions.Book404Exception;
 import org.junit.jupiter.api.Test;
@@ -46,42 +46,42 @@ class BookServiceTest {
 
     @Test
     void createBook_ShouldCreateBook_WhenBookIsValid() {
-        BookDTO requestDTO = createValidBookDto();
-        when(mapper.toEntity(any(BookDTO.class))).thenReturn(createValidBook());
-        when(mapper.toDTO(any(BookEntity.class))).thenReturn(createValidBookDtoWithId());
+        BookDto requestDto = createValidBookDto();
+        when(mapper.toEntity(any(BookDto.class))).thenReturn(createValidBook());
+        when(mapper.toDto(any(BookEntity.class))).thenReturn(createValidBookDtoWithId());
         when(repository.save(any(BookEntity.class))).thenReturn(createValidBookWithId());
-        BookDTO createdBook = service.createBook(requestDTO);
+        BookDto createdBook = service.createBook(requestDto);
         assertNotNull(createdBook);
         assertEquals(1L, createdBook.getId());
-        assertEquals(requestDTO.getTitle(), createdBook.getTitle());
-        assertEquals(requestDTO.getAuthors(), createdBook.getAuthors());
+        assertEquals(requestDto.getTitle(), createdBook.getTitle());
+        assertEquals(requestDto.getAuthors(), createdBook.getAuthors());
         verify(repository, times(1)).save(any());
     }
 
     @Test
     void createBook_ShouldReturnExistingBook_WhenBookWithSameIsbnExists() {
-        BookDTO requestDTO = createValidBookDtoWithISBN();
+        BookDto requestDto = createValidBookDtoWithISBN();
         when(repository.findByIsbn(anyString())).thenReturn(Optional.of(createValidBookWithId()));
-        when(mapper.toDTO(any(BookEntity.class))).thenReturn(createValidBookDtoWithId());
-        BookDTO createdBook = service.createBook(requestDTO);
+        when(mapper.toDto(any(BookEntity.class))).thenReturn(createValidBookDtoWithId());
+        BookDto createdBook = service.createBook(requestDto);
         assertNotNull(createdBook);
         assertEquals(1L, createdBook.getId());
-        assertEquals(requestDTO.getTitle(), createdBook.getTitle());
-        assertEquals(requestDTO.getAuthors(), createdBook.getAuthors());
+        assertEquals(requestDto.getTitle(), createdBook.getTitle());
+        assertEquals(requestDto.getAuthors(), createdBook.getAuthors());
         verify(repository, never()).save(any());
     }
 
     @Test
     void createBook_ShouldCreateBook_WhenIsbnNotFoundInRepository() {
-        BookDTO requestDTO = createValidBookDto();
+        BookDto requestDto = createValidBookDto();
         when(repository.save(any(BookEntity.class))).thenReturn(createValidBookWithId());
-        when(mapper.toEntity(any(BookDTO.class))).thenReturn(createValidBook());
-        when(mapper.toDTO(any(BookEntity.class))).thenReturn(createValidBookDtoWithId());
-        BookDTO createdBook = service.createBook(requestDTO);
+        when(mapper.toEntity(any(BookDto.class))).thenReturn(createValidBook());
+        when(mapper.toDto(any(BookEntity.class))).thenReturn(createValidBookDtoWithId());
+        BookDto createdBook = service.createBook(requestDto);
         assertNotNull(createdBook);
         assertEquals(1L, createdBook.getId());
-        assertEquals(requestDTO.getTitle(), createdBook.getTitle());
-        assertEquals(requestDTO.getAuthors(), createdBook.getAuthors());
+        assertEquals(requestDto.getTitle(), createdBook.getTitle());
+        assertEquals(requestDto.getAuthors(), createdBook.getAuthors());
         verify(repository, times(1)).save(any());
     }
 
@@ -97,8 +97,8 @@ class BookServiceTest {
     @Test
     void getBookById_ShouldReturnBook_WhenBookExists() {
         when(repository.findById(1L)).thenReturn(Optional.of(createValidBookWithId()));
-        when(mapper.toDTO(any(BookEntity.class))).thenReturn(createValidBookDtoWithId());
-        BookDTO book = service.getBookDtoById(1L);
+        when(mapper.toDto(any(BookEntity.class))).thenReturn(createValidBookDtoWithId());
+        BookDto book = service.getBookDtoById(1L);
         assertNotNull(book);
         verify(repository, times(1)).findById(1L);
     }
@@ -119,17 +119,17 @@ class BookServiceTest {
 
     @Test
     void updateBook_ShouldUpdateBook_WhenBookExists() {
-        BookDTO responseDTO = createValidBookDtoWithId();
-        BookDTO updateDTO = createValidBookDto();
-        responseDTO.setTitle("New Title");
+        BookDto responseDto = createValidBookDtoWithId();
+        BookDto updateDto = createValidBookDto();
+        responseDto.setTitle("New Title");
         when(repository.findById(1L)).thenReturn(Optional.of(createValidBookWithId()));
         when(repository.save(any(BookEntity.class))).thenReturn(createValidBookWithId());
-        when(mapper.toDTO(any(BookEntity.class))).thenReturn(responseDTO);
-        BookDTO updatedBook = service.updateBook(1L, updateDTO);
+        when(mapper.toDto(any(BookEntity.class))).thenReturn(responseDto);
+        BookDto updatedBook = service.updateBook(1L, updateDto);
         assertNotNull(updatedBook);
-        assertEquals(responseDTO.getId(), updatedBook.getId());
+        assertEquals(responseDto.getId(), updatedBook.getId());
         assertEquals("New Title", updatedBook.getTitle());
-        assertEquals(responseDTO.getAuthors(), updatedBook.getAuthors());
+        assertEquals(responseDto.getAuthors(), updatedBook.getAuthors());
         verify(repository, times(1)).save(any());
     }
 
@@ -137,7 +137,7 @@ class BookServiceTest {
     void searchBooks_ShouldUseUnrestrictedSpecification_WhenAllFiltersAreNull() {
         when(repository.findAll(ArgumentMatchers.<Specification<BookEntity>>any(), any(Pageable.class)))
                 .thenReturn(mockPage);
-        when(mapper.toDTO(ArgumentMatchers.<Page<BookEntity>>any())).thenReturn(mockBookPage);
+        when(mapper.toDto(ArgumentMatchers.<Page<BookEntity>>any())).thenReturn(mockBookPage);
 
         BookPage result = service.searchBooks(
                 null, null, null, null, null,
@@ -153,7 +153,7 @@ class BookServiceTest {
         String title = "Java";
         when(repository.findAll(ArgumentMatchers.<Specification<BookEntity>>any(), any(Pageable.class)))
                 .thenReturn(mockPage);
-        when(mapper.toDTO(ArgumentMatchers.<Page<BookEntity>>any())).thenReturn(mockBookPage);
+        when(mapper.toDto(ArgumentMatchers.<Page<BookEntity>>any())).thenReturn(mockBookPage);
 
         BookPage result = service.searchBooks(
                 title, null, null, null, null,
@@ -168,7 +168,7 @@ class BookServiceTest {
     void searchBooks_ShouldCombineSpecifications_WhenMultipleFiltersProvided() {
         when(repository.findAll(ArgumentMatchers.<Specification<BookEntity>>any(), any(Pageable.class)))
                 .thenReturn(mockPage);
-        when(mapper.toDTO(ArgumentMatchers.<Page<BookEntity>>any())).thenReturn(mockBookPage);
+        when(mapper.toDto(ArgumentMatchers.<Page<BookEntity>>any())).thenReturn(mockBookPage);
 
         BookPage result = service.searchBooks(
                 "Clean Code", "Robert Martin", "1234567890",

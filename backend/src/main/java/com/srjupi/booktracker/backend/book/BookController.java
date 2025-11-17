@@ -1,7 +1,7 @@
 package com.srjupi.booktracker.backend.book;
 
 import com.srjupi.booktracker.backend.api.BooksApi;
-import com.srjupi.booktracker.backend.api.dto.BookDTO;
+import com.srjupi.booktracker.backend.api.dto.BookDto;
 import com.srjupi.booktracker.backend.api.dto.BookPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,9 +22,9 @@ public class BookController implements BooksApi {
     }
 
     @Override
-    public ResponseEntity<BookDTO> createBook(BookDTO bookDTO) {
-        logger.info("POST /books called with body: {}", bookDTO);
-        BookDTO createdBook = service.createBook(bookDTO);
+    public ResponseEntity<BookDto> createBook(BookDto bookDto) {
+        logger.info("POST /books called with body: {}", bookDto);
+        BookDto createdBook = service.createBook(bookDto);
         URI location = URI.create(String.format("/books/%s", createdBook.getId()));
         logger.info("POST /books created book with id: {} at location: {}", createdBook.getId(), location);
         return ResponseEntity.created(location).body(createdBook);
@@ -39,17 +39,17 @@ public class BookController implements BooksApi {
     }
 
     @Override
-    public ResponseEntity<BookDTO> getBookById(Long id) {
+    public ResponseEntity<BookDto> getBookById(Long id) {
         logger.info("GET /books/{} called", id);
-        BookDTO bookDTO = service.getBookDtoById(id);
-        logger.info("GET /books/{} returning: {}", id, bookDTO);
-        return ResponseEntity.ok(bookDTO);
+        BookDto bookDto = service.getBookDtoById(id);
+        logger.info("GET /books/{} returning: {}", id, bookDto);
+        return ResponseEntity.ok(bookDto);
     }
 
     @Override
-    public ResponseEntity<List<BookDTO>> getBooks() {
+    public ResponseEntity<List<BookDto>> getBooks() {
         logger.info("GET /books called");
-        List<BookDTO> books = service.getBooks();
+        List<BookDto> books = service.getBooks();
         logger.info("GET /books returning {} books", books.size());
         return ResponseEntity.ok(books);
     }
@@ -65,9 +65,9 @@ public class BookController implements BooksApi {
     }
 
     @Override
-    public ResponseEntity<BookDTO> updateBookById(Long id, BookDTO bookDTO) {
-        logger.info("PUT /books/{} called with body: {}", id, bookDTO);
-        BookDTO updatedBook = service.updateBook(id, bookDTO);
+    public ResponseEntity<BookDto> updateBookById(Long id, BookDto bookDto) {
+        logger.info("PUT /books/{} called with body: {}", id, bookDto);
+        BookDto updatedBook = service.updateBook(id, bookDto);
         logger.info("PUT /books/{} updated book to: {}", id, updatedBook);
         return ResponseEntity.ok(updatedBook);
     }
