@@ -101,9 +101,27 @@ BookDto:
       type: string
       format: uri
 
+ReadingCreateRequest:
+  type: object
+  properties:
+    bookId:
+      type: integer
+      format: int64
+    startedAt:
+      type: string
+      format: date
+    finishedAt:
+      type: string
+      format: date
+  required:
+    - bookId
+
 ReadingDto:
   type: object
   properties:
+    id:
+      type: integer
+      format: int64
     book:
       $ref: "#/BookDto"
     startedAt:
@@ -112,6 +130,10 @@ ReadingDto:
     finishedAt:
       type: string
       format: date
+  required:
+    - id
+    - book
+    - startedAt
 
 FinishReadingRequest:
     type: object
@@ -119,5 +141,3 @@ FinishReadingRequest:
       finishedAt:
         type: string
         format: date
-    required:
-      - finishedAt
